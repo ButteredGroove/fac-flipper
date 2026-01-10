@@ -1,0 +1,72 @@
+{
+  "card": { "orientation": "portrait", "grid": { "cols": 12, "rows": 16 } },
+  "blocks": [
+    {
+      "id": "meta",
+      "type": "kv",
+      "x": 2,
+      "y": 1,
+      "w": 10,
+      "h": 3,
+      "items": [
+        {
+          "label": "PB",
+          "field": "PB",
+          "styles": {
+            "colorRules": [{ "prefix": "SP:", "color": "#16a34a" }]
+          }
+        },
+        { "label": "RN", "field": "RN" },
+        {
+          "label": "Error",
+          "field": "Error",
+          "styles": {
+            "colorRules": [{ "match": "No", "color": "#dc2626" }]
+          }
+        },
+        {
+          "label": "Pitch",
+          "field": "Pitch",
+          "styles": {
+            "colorRules": [
+              { "match": "Yes", "color": "#16a34a" },
+              { "match": "No", "color": "#dc2626" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "errors",
+      "type": "kv",
+      "title": "ERROR TYPE",
+      "x": 2,
+      "y": 5,
+      "w": 10,
+      "h": 4,
+      "items": [
+        { "label": "P", "field": "E P" },
+        { "label": "C", "field": "E C" },
+        { "label": "IF", "field": "E IF" },
+        { "label": "OF", "field": "E OF" }
+      ]
+    },
+    {
+      "id": "out",
+      "type": "table",
+      "x": 2,
+      "y": 9,
+      "w": 10,
+      "h": 7,
+      "rows": ["RP", "RN", "LP", "LN", "P"],
+      "columns": [
+        { "header": "OUT", "field_prefix": "O " },
+        {
+          "header": "CD",
+          "field_prefix": "CD ",
+          "headerStyles": { "color": "#dc2626" }
+        }
+      ]
+    }
+  ]
+}

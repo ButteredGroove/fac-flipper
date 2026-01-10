@@ -1,0 +1,12 @@
+{
+  "name": "fac-flipper",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "@biomejs/biome": "1.8.3"
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "format": "biome format --write ."
+  }
+}

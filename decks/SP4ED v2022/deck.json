@@ -1,0 +1,6 @@
+{
+  "name": "SP4ED v2022",
+  "version": "2022",
+  "data_csv": "cards.csv",
+  "layout_json": "layout.json"
+}
