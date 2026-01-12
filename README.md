@@ -10,7 +10,7 @@
 
 This project focuses on **presentation and interaction**, not game logic. Its sole responsibility is to draw a card from a deck and render it cleanly and accurately according to a declarative layout.
 
-Version **v0.0.1** establishes the core architecture and UI.
+Version **v0.0.2** establishes the core architecture and UI.
 
 ---
 
@@ -33,7 +33,7 @@ Fast Action Cards are fundamental to many baseball sims, but digital implementat
 
 ---
 
-## Features (v0.0.1)
+## Features (v0.0.2)
 
 - Draw cards from FAC decks
 - With- or without-replacement draw modes
@@ -60,10 +60,7 @@ Fast Action Cards are fundamental to many baseball sims, but digital implementat
 
 This repository includes ready-to-use decks for:
 
-- **FAC Flipper** (v0.1)
-- **Retro FACs (1980s)** (v1.2)
-- **New FACs (2024)** (v1.0)
-- **SP4ED v2022** (v2022)
+- **SP4ED** (v2022)
 
 Each deck is implemented using the same underlying data and layout system, demonstrating how different FAC formats can coexist without changes to application code.
 
@@ -92,15 +89,7 @@ fac-flipper/
   app.js
   decks/
     index.json
-    example/
-      deck.json
-      cards.csv
-      layout.json
-    retro/
-      deck.json
-      cards.csv
-      layout.json
-    new/
+    SP4ED/
       deck.json
       cards.csv
       layout.json
@@ -141,10 +130,20 @@ This file ties everything together.
 {
   "name": "My FAC Deck",
   "version": "1.0",
+  "source": "Derived from Example FAC set (2022)",
+  "row_modifications": {
+    "source": "https://example.com/fac-corrections",
+    "123": {
+      "RN": "Changed to '73' from 'Yes'"
+    }
+  },
   "data_csv": "cards.csv",
   "layout_json": "layout.json"
 }
 ```
+
+`source` is optional metadata for documenting where the card data came from; the UI ignores it.
+`row_modifications` is optional metadata for noting data fixes or overrides applied to the deck, keyed by card id and column id. The UI ignores it.
 
 ### 4. Add card data (`cards.csv`)
 
@@ -214,7 +213,7 @@ No FAC-specific logic exists in the renderer.
 
 ## Status
 
-**v0.0.1** establishes:
+**v0.0.2** establishes:
 
 - core UI
 - deck loading

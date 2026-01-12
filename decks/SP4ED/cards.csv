@@ -381,21 +381,21 @@ CD,77,No,No,3,2,3,5,G5,F7,G4,F7,G4A,SS,CF,CF,LF,SS
 8,81,No,No,1,2,3,4,G6,G6,G4A,G4,G6A,CF,RF,CF,CF,RF
 10,35,10-20,No,1,2,1,4,F8,F9,GX3,F9,G3,P,2B,CF,SS,RF
 11,71,10-20,Yes,3,2,3,5,G6A,GX6,G4A,FD9,GX3,SS,LF,P,P,C
-SP:A or better must STEAL,,,,,,,,,,,,,,,,,
-SP:A or better must STEAL,,,,,,,,,,,,,,,,,
-SP:A or better must STEAL,,,,,,,,,,,,,,,,,
+SP >= A must STEAL,,,,,,,,,,,,,,,,,
+SP >= A must STEAL,,,,,,,,,,,,,,,,,
+SP >= A must STEAL,,,,,,,,,,,,,,,,,
 11,84,No,No,2,1,1,5,GX4,G6A,F7,G6,G1A,2B,LF,P,3B,1B
 4,24,No,No,1,2,3,4,G6,F8,G4,F8,FD8,3B,3B,SS,2B,SS
-SP:C or better must STEAL,,,,,,,,,,,,,,,,,
-SP:C or better must STEAL,,,,,,,,,,,,,,,,,
-SP:D or better must STEAL,,,,,,,,,,,,,,,,,
-SP:B or better must STEAL,,,,,,,,,,,,,P,2B,CF,SS,RF
-SP:B or better must STEAL,,,,,,,,,,,,,P,2B,CF,SS,RF
-SP:B or better must STEAL,,,,,,,,,,,,,P,2B,CF,SS,RF
-SP:C or better must STEAL,,,,,,,,,,,,,P,2B,CF,SS,RF
-SP:C or better must STEAL,,,,,,,,,,,,,P,2B,CF,SS,RF
-SP:C or better must STEAL,,,,,,,,,,,,,,,,,
-SP:D or better must STEAL,,,,,,,,,,,,,,,,,
-SP:D or better must STEAL,,,,,,,,,,,,,,,,,
-SP:E or better must STEAL,,,,,,,,,,,,,,,,,
-SP:E or better must STEAL,,,,,,,,,,,,,,,,,
+SP >= C must STEAL,,,,,,,,,,,,,,,,,
+SP >= C must STEAL,,,,,,,,,,,,,,,,,
+SP >= D must STEAL,,,,,,,,,,,,,,,,,
+SP >= B must STEAL,,,,,,,,,,,,,P,2B,CF,SS,RF
+SP >= B must STEAL,,,,,,,,,,,,,P,2B,CF,SS,RF
+SP >= B must STEAL,,,,,,,,,,,,,P,2B,CF,SS,RF
+SP >= C must STEAL,,,,,,,,,,,,,P,2B,CF,SS,RF
+SP >= C must STEAL,,,,,,,,,,,,,P,2B,CF,SS,RF
+SP >= C must STEAL,,,,,,,,,,,,,,,,,
+SP >= D must STEAL,,,,,,,,,,,,,,,,,
+SP >= D must STEAL,,,,,,,,,,,,,,,,,
+SP >= E must STEAL,,,,,,,,,,,,,,,,,
+SP >= E must STEAL,,,,,,,,,,,,,,,,,
