@@ -12,6 +12,10 @@ This project focuses on **presentation and interaction**, not game logic. Its so
 
 Version **v0.0.2** establishes the core architecture and UI.
 
+## Live site
+
+https://butteredgroove.github.io/fac-flipper/
+
 ---
 
 ## Why this exists
