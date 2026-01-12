@@ -10,7 +10,7 @@
 
 This project focuses on **presentation and interaction**, not game logic. Its sole responsibility is to draw a card from a deck and render it cleanly and accurately according to a declarative layout.
 
-Version **v0.0.3** establishes the core architecture and UI.
+Version **v0.0.4** establishes the core architecture and UI.
 
 ## Live site
 
@@ -37,7 +37,7 @@ Fast Action Cards are fundamental to many baseball sims, but digital implementat
 
 ---
 
-## Features (v0.0.3)
+## Features (v0.0.4)
 
 - Draw cards from FAC decks
 - With- or without-replacement draw modes
@@ -91,6 +91,11 @@ fac-flipper/
   index.html
   styles.css
   app.js
+  src/
+    deck.js
+    state.js
+    ui.js
+    utils.js
   decks/
     index.json
     SP4ED/
@@ -222,7 +227,7 @@ sure to update to point to your counter.
 
 ## Status
 
-**v0.0.3** establishes:
+**v0.0.4** establishes:
 
 - core UI
 - deck loading
