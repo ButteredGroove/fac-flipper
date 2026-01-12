@@ -14,7 +14,7 @@ Version **v0.0.2** establishes the core architecture and UI.
 
 ## Live site
 
-https://butteredgroove.github.io/fac-flipper/
+<https://butteredgroove.github.io/fac-flipper/>
 
 ---
 
@@ -202,6 +202,11 @@ No FAC-specific logic exists in the renderer.
 ## Hosting
 
 **fac-flipper** is a static web app and can be hosted on **any web host or web hosting site** that serves static files.
+
+## Analytics
+
+This site uses GoatCounter for privacy-friendly analytics. The tracking snippet lives in `index.html` and points to `https://butteredgroove.goatcounter.com/count`. If you host your own fac-flipper, be
+sure to update to point to your counter.
 
 ---
 
