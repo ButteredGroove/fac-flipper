@@ -136,6 +136,9 @@ async function selectDeck(index) {
   clearPreview();
 
   await ensureDeckLoaded(deck);
+  const layoutMetrics = getLayoutMetrics(deck.layout);
+  applyLayoutVars(elements.cardFrame, elements.card, layoutMetrics);
+  applyLayoutVars(elements.previewFrame, elements.previewCard, layoutMetrics);
   resetShoe();
   renderCard();
   setDrawEnabled(true);
@@ -365,14 +368,43 @@ function renderPreviewCard() {
   );
 }
 
-function renderCardView(frameEl, cardEl, layout, card, placeholderText) {
+function getLayoutMetrics(layout) {
   const cols = layout.card?.grid?.cols || 12;
   const rows = layout.card?.grid?.rows || 16;
+  const width = Number(layout.card?.size?.width);
+  const textScaleValue = Number(layout.card?.text_scale);
+  const hasWidth = Number.isFinite(width) && width > 0;
+  const hasTextScale = Number.isFinite(textScaleValue) && textScaleValue > 0;
+  return {
+    cols,
+    rows,
+    width,
+    hasWidth,
+    textScale: hasTextScale ? textScaleValue : 1,
+    hasTextScale,
+  };
+}
 
-  frameEl.style.setProperty("--card-cols", cols);
-  frameEl.style.setProperty("--card-rows", rows);
-  cardEl.style.setProperty("--card-cols", cols);
-  cardEl.style.setProperty("--card-rows", rows);
+function applyLayoutVars(frameEl, cardEl, metrics) {
+  frameEl.style.setProperty("--card-cols", metrics.cols);
+  frameEl.style.setProperty("--card-rows", metrics.rows);
+  cardEl.style.setProperty("--card-cols", metrics.cols);
+  cardEl.style.setProperty("--card-rows", metrics.rows);
+  if (metrics.hasWidth) {
+    frameEl.style.setProperty("--card-width", `${metrics.width}px`);
+  } else {
+    frameEl.style.removeProperty("--card-width");
+  }
+  if (metrics.hasTextScale) {
+    frameEl.style.setProperty("--card-text-scale", metrics.textScale);
+  } else {
+    frameEl.style.removeProperty("--card-text-scale");
+  }
+}
+
+function renderCardView(frameEl, cardEl, layout, card, placeholderText) {
+  const metrics = getLayoutMetrics(layout);
+  applyLayoutVars(frameEl, cardEl, metrics);
 
   cardEl.innerHTML = "";
 
@@ -394,7 +426,7 @@ function renderCardView(frameEl, cardEl, layout, card, placeholderText) {
     blockEl.style.gridRow = `${block.y} / span ${block.h}`;
 
     if (block.styles?.fontSize) {
-      blockEl.style.fontSize = `${block.styles.fontSize}px`;
+      blockEl.style.fontSize = `${block.styles.fontSize * metrics.textScale}px`;
     }
 
     if (block.title) {

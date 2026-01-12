@@ -157,7 +157,11 @@ body {
 }
 
 .card-frame {
-  width: min(480px, 80vw);
+  --card-frame-padding: var(--space-2);
+  width: min(
+    calc(var(--card-width, 448px) + (var(--card-frame-padding) * 2)),
+    80vw
+  );
   aspect-ratio: var(--card-cols, 12) / var(--card-rows, 16);
   background: var(--panel);
   border-radius: 16px;
@@ -165,7 +169,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-2);
+  padding: var(--card-frame-padding);
   transition: transform 150ms ease, box-shadow 150ms ease;
   cursor: pointer;
 }
@@ -210,7 +214,7 @@ body {
   align-items: center;
   justify-content: center;
   color: var(--muted);
-  font-size: 14px;
+  font-size: calc(14px * var(--card-text-scale, 1));
   text-align: center;
 }
 
@@ -227,7 +231,7 @@ body {
 }
 
 .block-title {
-  font-size: 11px;
+  font-size: calc(11px * var(--card-text-scale, 1));
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--muted);
@@ -254,7 +258,7 @@ body {
 }
 
 .kv-label {
-  font-size: 12px;
+  font-size: calc(12px * var(--card-text-scale, 1));
   font-weight: 600;
   color: var(--muted);
   text-transform: uppercase;
@@ -262,7 +266,7 @@ body {
 }
 
 .kv-value {
-  font-size: 14px;
+  font-size: calc(14px * var(--card-text-scale, 1));
   font-weight: 500;
 }
 
@@ -274,14 +278,14 @@ body {
 .card-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
+  font-size: calc(12px * var(--card-text-scale, 1));
 }
 
 .card-table thead th {
   font-weight: 600;
   color: var(--muted);
   text-transform: uppercase;
-  font-size: 11px;
+  font-size: calc(11px * var(--card-text-scale, 1));
   padding: 4px;
   border-bottom: 1px solid var(--border);
 }

@@ -1,0 +1,17 @@
+{
+  "name": "SP4ED",
+  "version": "2022",
+  "source": "4th Edition FAC (Revised  2022).pdf",
+  "data_csv": "cards.csv",
+  "row_modifications": {
+    "source": "https://www.tapatalk.com/groups/thedigitaldiamondbaseballdugout/missing-fields-in-4th-edition-fac-revised-2022-pdf-t5061.html",
+    "123": {
+      "RN": "Changed to '73' from 'Yes'"
+    },
+    "382": {
+      "E P": "Changed to '1' from blank",
+      "E C": "Changed to '2' from blank"
+    }
+  },
+  "layout_json": "layout.json"
+}
