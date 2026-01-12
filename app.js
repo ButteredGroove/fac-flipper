@@ -563,14 +563,18 @@ function applyValueStyles(value, styles, element) {
 }
 
 function parseCards(csvText) {
-  const rows = parseCSV(csvText);
+  const result = Papa.parse(csvText, { skipEmptyLines: "greedy" });
+  if (result.errors?.length) {
+    console.warn("CSV parse errors:", result.errors);
+  }
+  const rows = Array.isArray(result.data) ? result.data : [];
   if (rows.length === 0) {
     return [];
   }
-  const headers = rows[0].map((header) => header.trim());
+  const headers = rows[0].map((header) => String(header ?? "").trim());
   return rows
     .slice(1)
-    .filter((row) => row.some((cell) => String(cell).trim() !== ""))
+    .filter((row) => row.some((cell) => String(cell ?? "").trim() !== ""))
     .map((row, index) => {
       const card = {};
       headers.forEach((header, i) => {
@@ -580,47 +584,6 @@ function parseCards(csvText) {
       card.__id = id || String(index + 1).padStart(3, "0");
       return card;
     });
-}
-
-function parseCSV(text) {
-  const rows = [];
-  let row = [];
-  let value = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < text.length; i += 1) {
-    const char = text[i];
-    if (char === '"') {
-      if (inQuotes && text[i + 1] === '"') {
-        value += '"';
-        i += 1;
-      } else {
-        inQuotes = !inQuotes;
-      }
-    } else if (char === "," && !inQuotes) {
-      row.push(value);
-      value = "";
-    } else if ((char === "\n" || char === "\r") && !inQuotes) {
-      if (char === "\r" && text[i + 1] === "\n") {
-        i += 1;
-      }
-      row.push(value);
-      if (row.length > 1 || row[0] !== "") {
-        rows.push(row);
-      }
-      row = [];
-      value = "";
-    } else {
-      value += char;
-    }
-  }
-
-  if (value.length > 0 || row.length > 0) {
-    row.push(value);
-    rows.push(row);
-  }
-
-  return rows;
 }
 
 function shuffle(list) {
