@@ -10,11 +10,11 @@
 
 This project focuses on **presentation and interaction**, not game logic. Its sole responsibility is to draw a card from a deck and render it cleanly and accurately according to a declarative layout.
 
-Version **v0.0.2** establishes the core architecture and UI.
+Version **v0.0.3** establishes the core architecture and UI.
 
 ## Live site
 
-https://butteredgroove.github.io/fac-flipper/
+<https://butteredgroove.github.io/fac-flipper/>
 
 ---
 
@@ -37,7 +37,7 @@ Fast Action Cards are fundamental to many baseball sims, but digital implementat
 
 ---
 
-## Features (v0.0.2)
+## Features (v0.0.3)
 
 - Draw cards from FAC decks
 - With- or without-replacement draw modes
@@ -203,6 +203,11 @@ No FAC-specific logic exists in the renderer.
 
 **fac-flipper** is a static web app and can be hosted on **any web host or web hosting site** that serves static files.
 
+## Analytics
+
+This site uses GoatCounter for privacy-friendly analytics. The tracking snippet lives in `index.html` and points to `https://butteredgroove.goatcounter.com/count`. If you host your own fac-flipper, be
+sure to update to point to your counter.
+
 ---
 
 ## Non-goals (intentional)
@@ -217,7 +222,7 @@ No FAC-specific logic exists in the renderer.
 
 ## Status
 
-**v0.0.2** establishes:
+**v0.0.3** establishes:
 
 - core UI
 - deck loading
