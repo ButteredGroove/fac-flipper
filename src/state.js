@@ -22,18 +22,23 @@ const elements = {
   modal: document.getElementById("modal"),
   modalTitle: document.getElementById("modalTitle"),
   modalOk: document.getElementById("modalOk"),
+  modalCancel: document.getElementById("modalCancel"),
   modalBody: document.getElementById("modalBody"),
 };
 
 const state = {
   decks: [],
   currentDeck: null,
+  currentDeckIndex: null,
   currentCard: null,
   previewCard: null,
   history: [],
   withoutReplacement: false,
   shoe: [],
   modalOpen: false,
+  modalOnConfirm: null,
+  modalOnCancel: null,
+  modalCloseOnOverlay: true,
 };
 
 export { MAX_HISTORY, elements, state };

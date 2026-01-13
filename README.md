@@ -10,7 +10,7 @@
 
 This project focuses on **presentation and interaction**, not game logic. Its sole responsibility is to draw a card from a deck and render it cleanly and accurately according to a declarative layout.
 
-Version **v0.0.6** establishes the core architecture and UI.
+Version **v0.0.7** establishes the core architecture and UI.
 
 ## Live site
 
@@ -37,7 +37,7 @@ Fast Action Cards are fundamental to many baseball sims, but digital implementat
 
 ---
 
-## Features (v0.0.6)
+## Features (v0.0.7)
 
 - Draw cards from FAC decks
 - With- or without-replacement draw modes
@@ -48,6 +48,7 @@ Fast Action Cards are fundamental to many baseball sims, but digital implementat
 - Recent draw history
 - Click history entries to preview previous cards
 - Keyboard shortcuts for fast interaction
+- Confirmation dialogs for reset, reshuffle, and deck changes
 - About dialog with app metadata and support link
 
 ---
@@ -55,8 +56,10 @@ Fast Action Cards are fundamental to many baseball sims, but digital implementat
 ## Controls
 
 - Click the card or press Space/Enter to draw.
-- Press `R` or click Reshuffle to reshuffle without clearing history.
-- Use the Reset button to reshuffle and clear history.
+- Press `R` or click Reshuffle to reshuffle without clearing history (confirmation required).
+- Use the Reset button to reshuffle and clear history (confirmation required).
+- Click a different deck to switch (confirmation required).
+- Clicking the active deck does nothing.
 - Click a history entry to preview it alongside the current card.
 - Click About for version, author, and support link.
 
@@ -248,7 +251,7 @@ sure to update to point to your counter.
 
 ## Status
 
-**v0.0.6** establishes:
+**v0.0.7** establishes:
 
 - core UI
 - deck loading
