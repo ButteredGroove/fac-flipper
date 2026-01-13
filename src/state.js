@@ -12,14 +12,17 @@ const elements = {
   previewCard: document.getElementById("previewCard"),
   clearPreview: document.getElementById("clearPreview"),
   drawButton: document.getElementById("drawButton"),
+  aboutButton: document.getElementById("aboutButton"),
   resetButtonTop: document.getElementById("resetButtonTop"),
   reshuffleButton: document.getElementById("reshuffleButton"),
   replacementToggleSide: document.getElementById("replacementToggleSide"),
   remainingText: document.getElementById("remainingText"),
   historyList: document.getElementById("historyList"),
   modalOverlay: document.getElementById("modalOverlay"),
+  modal: document.getElementById("modal"),
+  modalTitle: document.getElementById("modalTitle"),
   modalOk: document.getElementById("modalOk"),
-  modalBody: document.querySelector(".modal-body"),
+  modalBody: document.getElementById("modalBody"),
 };
 
 const state = {

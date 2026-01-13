@@ -1,3 +1,10 @@
+import {
+  APP_AUTHOR,
+  APP_ISSUES_URL,
+  APP_NAME,
+  APP_SHORTCUTS,
+  APP_VERSION,
+} from "./config.js";
 import { elements, state } from "./state.js";
 import { formatVersion, getValue } from "./utils.js";
 
@@ -310,8 +317,78 @@ function applyValueStyles(value, styles, element) {
   }
 }
 
-function openModal(message) {
-  elements.modalBody.textContent = message;
+function createAboutRow(label, value) {
+  const row = document.createElement("div");
+  row.className = "about-row";
+
+  const labelEl = document.createElement("div");
+  labelEl.className = "about-label";
+  labelEl.textContent = label;
+
+  const valueEl = document.createElement("div");
+  valueEl.className = "about-value";
+  if (value instanceof Node) {
+    valueEl.appendChild(value);
+  } else {
+    valueEl.textContent = value;
+  }
+
+  row.appendChild(labelEl);
+  row.appendChild(valueEl);
+  return row;
+}
+
+function openAboutModal() {
+  const list = document.createElement("div");
+  list.className = "about-list";
+
+  const appVersion = `${APP_NAME} ${formatVersion(APP_VERSION)}`;
+  list.appendChild(createAboutRow("App", appVersion));
+  list.appendChild(createAboutRow("Creator", APP_AUTHOR));
+
+  const issuesLink = document.createElement("a");
+  issuesLink.href = APP_ISSUES_URL;
+  issuesLink.target = "_blank";
+  issuesLink.rel = "noreferrer";
+  issuesLink.textContent = "Go here";
+  list.appendChild(createAboutRow("Suggestions & bugs", issuesLink));
+
+  list.appendChild(createAboutRow("Shortcuts", APP_SHORTCUTS));
+
+  openModal({
+    title: "About",
+    bodyNodes: list,
+    confirmLabel: "Close",
+    variant: "about",
+  });
+}
+
+function openModal(messageOrOptions, overrides = {}) {
+  const input = messageOrOptions ?? {};
+  const options =
+    typeof input === "string" ? { body: input, ...overrides } : { ...input };
+  const {
+    title = "Notice",
+    body = "",
+    bodyNodes = null,
+    confirmLabel = "OK",
+    variant = "",
+  } = options || {};
+
+  elements.modalTitle.textContent = title;
+  elements.modalOk.textContent = confirmLabel;
+  elements.modalBody.innerHTML = "";
+
+  if (bodyNodes) {
+    const nodes = Array.isArray(bodyNodes) ? bodyNodes : [bodyNodes];
+    for (const node of nodes) {
+      elements.modalBody.appendChild(node);
+    }
+  } else {
+    elements.modalBody.textContent = body;
+  }
+
+  elements.modal.classList.toggle("is-about", variant === "about");
   elements.modalOverlay.hidden = false;
   state.modalOpen = true;
   elements.modalOk.focus();
@@ -319,6 +396,7 @@ function openModal(message) {
 
 function closeModal() {
   elements.modalOverlay.hidden = true;
+  elements.modal.classList.remove("is-about");
   state.modalOpen = false;
 }
 
@@ -331,6 +409,7 @@ export {
   closeModal,
   getLayoutMetrics,
   highlightDeck,
+  openAboutModal,
   openModal,
   renderCard,
   renderCardView,

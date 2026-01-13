@@ -10,6 +10,7 @@ import {
   closeModal,
   getLayoutMetrics,
   highlightDeck,
+  openAboutModal,
   openModal,
   renderCard,
   renderDeckError,
@@ -57,6 +58,7 @@ function wireEvents() {
   elements.reshuffleButton.addEventListener("click", () =>
     reshuffleDeck(false),
   );
+  elements.aboutButton.addEventListener("click", openAboutModal);
 
   elements.replacementToggleSide.addEventListener("change", (event) => {
     setReplacementMode(event.target.checked);
@@ -131,7 +133,10 @@ function drawCard() {
   if (state.withoutReplacement) {
     if (state.shoe.length === 0) {
       resetShoe();
-      openModal("Deck expended, reshuffled.");
+      openModal({
+        title: "Deck reshuffled",
+        body: "Deck expended, reshuffled.",
+      });
     }
     cardIndex = state.shoe.pop();
   } else {
