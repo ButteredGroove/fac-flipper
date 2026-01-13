@@ -372,11 +372,18 @@ function openModal(messageOrOptions, overrides = {}) {
     body = "",
     bodyNodes = null,
     confirmLabel = "OK",
+    cancelLabel = "",
     variant = "",
+    onConfirm = null,
+    onCancel = null,
+    closeOnOverlay = true,
   } = options || {};
 
   elements.modalTitle.textContent = title;
   elements.modalOk.textContent = confirmLabel;
+  elements.modalCancel.textContent = cancelLabel || "Cancel";
+  const showCancel = Boolean(cancelLabel);
+  elements.modalCancel.hidden = !showCancel;
   elements.modalBody.innerHTML = "";
 
   if (bodyNodes) {
@@ -391,13 +398,20 @@ function openModal(messageOrOptions, overrides = {}) {
   elements.modal.classList.toggle("is-about", variant === "about");
   elements.modalOverlay.hidden = false;
   state.modalOpen = true;
-  elements.modalOk.focus();
+  state.modalOnConfirm = onConfirm;
+  state.modalOnCancel = onCancel;
+  state.modalCloseOnOverlay = closeOnOverlay;
+  const focusTarget = showCancel ? elements.modalCancel : elements.modalOk;
+  focusTarget.focus();
 }
 
 function closeModal() {
   elements.modalOverlay.hidden = true;
   elements.modal.classList.remove("is-about");
   state.modalOpen = false;
+  state.modalOnConfirm = null;
+  state.modalOnCancel = null;
+  state.modalCloseOnOverlay = true;
 }
 
 function setDrawEnabled(enabled) {

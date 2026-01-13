@@ -13,7 +13,10 @@ const fixture = `
     <div id="modal" class="modal">
       <div id="modalTitle" class="modal-title"></div>
       <div id="modalBody" class="modal-body"></div>
-      <button id="modalOk" type="button">OK</button>
+      <div class="modal-actions">
+        <button id="modalCancel" type="button">Cancel</button>
+        <button id="modalOk" type="button">OK</button>
+      </div>
     </div>
   </div>
 `;
@@ -47,6 +50,7 @@ describe("modal UI", () => {
       "Hello there",
     );
     expect(document.getElementById("modalOk").textContent).toBe("OK");
+    expect(document.getElementById("modalCancel").hidden).toBe(true);
     expect(document.getElementById("modalOverlay").hidden).toBe(false);
     expect(
       document.getElementById("modal").classList.contains("is-about"),
@@ -69,6 +73,7 @@ describe("modal UI", () => {
       "Custom body",
     );
     expect(document.getElementById("modalOk").textContent).toBe("Close");
+    expect(document.getElementById("modalCancel").hidden).toBe(true);
     expect(
       document.getElementById("modal").classList.contains("is-about"),
     ).toBe(true);
@@ -83,6 +88,17 @@ describe("modal UI", () => {
 
     expect(document.getElementById("modalBody").textContent).toBe("Node body");
     expect(document.getElementById("modalOk").textContent).toBe("Dismiss");
+    expect(document.getElementById("modalCancel").hidden).toBe(true);
+  });
+
+  it("shows a cancel button when a cancel label is provided", async () => {
+    const { openModal } = await setupUi();
+
+    openModal({ body: "Confirm?", cancelLabel: "Back" });
+
+    const cancelButton = document.getElementById("modalCancel");
+    expect(cancelButton.hidden).toBe(false);
+    expect(cancelButton.textContent).toBe("Back");
   });
 
   it("renders About modal content", async () => {

@@ -50,13 +50,15 @@ function wireEvents() {
     }
     if (event.key.toLowerCase() === "r") {
       event.preventDefault();
-      reshuffleDeck(false);
+      requestReshuffle(false);
     }
   });
 
-  elements.resetButtonTop.addEventListener("click", () => reshuffleDeck(true));
+  elements.resetButtonTop.addEventListener("click", () =>
+    requestReshuffle(true),
+  );
   elements.reshuffleButton.addEventListener("click", () =>
-    reshuffleDeck(false),
+    requestReshuffle(false),
   );
   elements.aboutButton.addEventListener("click", openAboutModal);
 
@@ -66,11 +68,73 @@ function wireEvents() {
 
   elements.clearPreview.addEventListener("click", clearPreview);
 
-  elements.modalOk.addEventListener("click", closeModal);
+  elements.modalOk.addEventListener("click", handleModalConfirm);
+  elements.modalCancel.addEventListener("click", handleModalCancel);
   elements.modalOverlay.addEventListener("click", (event) => {
     if (event.target === elements.modalOverlay) {
-      closeModal();
+      handleModalOverlayClick();
     }
+  });
+}
+
+function handleModalConfirm() {
+  const onConfirm = state.modalOnConfirm;
+  closeModal();
+  if (onConfirm) {
+    onConfirm();
+  }
+}
+
+function handleModalCancel() {
+  const onCancel = state.modalOnCancel;
+  closeModal();
+  if (onCancel) {
+    onCancel();
+  }
+}
+
+function handleModalOverlayClick() {
+  if (!state.modalCloseOnOverlay) {
+    return;
+  }
+  handleModalCancel();
+}
+
+function requestReshuffle(clearHistory) {
+  if (!state.currentDeck || state.modalOpen) {
+    return;
+  }
+  const title = clearHistory ? "Reset deck?" : "Reshuffle deck?";
+  const body = clearHistory
+    ? "This will reshuffle the deck and clear the current card and history."
+    : "This will reshuffle the deck without clearing history.";
+  const confirmLabel = clearHistory ? "Reset" : "Reshuffle";
+  openModal({
+    title,
+    body,
+    confirmLabel,
+    cancelLabel: "Cancel",
+    onConfirm: () => reshuffleDeck(clearHistory),
+  });
+}
+
+function requestDeckChange(index) {
+  const deck = state.decks[index];
+  if (!deck || state.modalOpen) {
+    return;
+  }
+  if (state.currentDeckIndex === index) {
+    return;
+  }
+  const deckName = deck.name || "this deck";
+  openModal({
+    title: "Change deck?",
+    body: `Switch to ${deckName}? This will clear the current card and history.`,
+    confirmLabel: "Change deck",
+    cancelLabel: "Cancel",
+    onConfirm: () => {
+      void selectDeck(index);
+    },
   });
 }
 
@@ -87,7 +151,7 @@ async function loadDeckManifest() {
     );
 
     state.decks = deckEntries;
-    renderDeckList(selectDeck);
+    renderDeckList(requestDeckChange);
 
     if (state.decks.length > 0) {
       await selectDeck(0);
@@ -102,8 +166,12 @@ async function selectDeck(index) {
   if (!deck) {
     return;
   }
+  if (state.currentDeckIndex === index) {
+    return;
+  }
 
   state.currentDeck = deck;
+  state.currentDeckIndex = index;
   state.currentCard = null;
   state.history = [];
   state.previewCard = null;
