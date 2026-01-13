@@ -558,6 +558,58 @@ body {
   font-weight: 600;
 }
 
+.modal-body {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.modal-body a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.modal-body a:hover {
+  text-decoration: underline;
+}
+
+.modal.is-about {
+  text-align: left;
+}
+
+.modal.is-about .modal-title {
+  text-align: left;
+}
+
+.about-list {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.about-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.about-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.about-value {
+  font-weight: 600;
+}
+
+@media (max-width: 520px) {
+  .about-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 900px) {
   .content {
     flex-direction: column;

@@ -10,7 +10,7 @@
 
 This project focuses on **presentation and interaction**, not game logic. Its sole responsibility is to draw a card from a deck and render it cleanly and accurately according to a declarative layout.
 
-Version **v0.0.5** establishes the core architecture and UI.
+Version **v0.0.6** establishes the core architecture and UI.
 
 ## Live site
 
@@ -37,7 +37,7 @@ Fast Action Cards are fundamental to many baseball sims, but digital implementat
 
 ---
 
-## Features (v0.0.5)
+## Features (v0.0.6)
 
 - Draw cards from FAC decks
 - With- or without-replacement draw modes
@@ -48,6 +48,7 @@ Fast Action Cards are fundamental to many baseball sims, but digital implementat
 - Recent draw history
 - Click history entries to preview previous cards
 - Keyboard shortcuts for fast interaction
+- About dialog with app metadata and support link
 
 ---
 
@@ -57,6 +58,7 @@ Fast Action Cards are fundamental to many baseball sims, but digital implementat
 - Press `R` or click Reshuffle to reshuffle without clearing history.
 - Use the Reset button to reshuffle and clear history.
 - Click a history entry to preview it alongside the current card.
+- Click About for version, author, and support link.
 
 ---
 
@@ -92,6 +94,7 @@ fac-flipper/
   styles.css
   app.js
   src/
+    config.js
     deck.js
     state.js
     ui.js
@@ -245,7 +248,7 @@ sure to update to point to your counter.
 
 ## Status
 
-**v0.0.5** establishes:
+**v0.0.6** establishes:
 
 - core UI
 - deck loading
