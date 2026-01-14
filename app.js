@@ -63,7 +63,7 @@ function wireEvents() {
   elements.aboutButton.addEventListener("click", openAboutModal);
 
   elements.replacementToggleSide.addEventListener("change", (event) => {
-    setReplacementMode(event.target.checked);
+    requestReplacementMode(event.target.checked);
   });
 
   elements.clearPreview.addEventListener("click", clearPreview);
@@ -104,6 +104,10 @@ function requestReshuffle(clearHistory) {
   if (!state.currentDeck || state.modalOpen) {
     return;
   }
+  if (state.history.length === 0) {
+    reshuffleDeck(clearHistory);
+    return;
+  }
   const title = clearHistory ? "Reset deck?" : "Reshuffle deck?";
   const body = clearHistory
     ? "This will reshuffle the deck and clear the current card and history."
@@ -124,6 +128,10 @@ function requestDeckChange(index) {
     return;
   }
   if (state.currentDeckIndex === index) {
+    return;
+  }
+  if (state.history.length === 0) {
+    void selectDeck(index);
     return;
   }
   const deckName = deck.name || "this deck";
@@ -246,6 +254,31 @@ function resetShoe() {
     state.shoe = [];
   }
   updateRemaining();
+}
+
+function requestReplacementMode(withoutReplacement) {
+  if (state.modalOpen || !state.currentDeck) {
+    elements.replacementToggleSide.checked = state.withoutReplacement;
+    return;
+  }
+
+  if (!withoutReplacement && state.withoutReplacement) {
+    const deckSize = state.currentDeck.cards?.length || 0;
+    const remaining = state.shoe.length;
+    if (deckSize > 0 && remaining < deckSize) {
+      elements.replacementToggleSide.checked = true;
+      openModal({
+        title: "Turn off without replacement?",
+        body: `You have ${remaining} of ${deckSize} cards remaining. Turning this off will reshuffle the deck.`,
+        confirmLabel: "Turn off",
+        cancelLabel: "Keep on",
+        onConfirm: () => setReplacementMode(false),
+      });
+      return;
+    }
+  }
+
+  setReplacementMode(withoutReplacement);
 }
 
 function setReplacementMode(withoutReplacement) {

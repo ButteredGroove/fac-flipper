@@ -1,0 +1,18 @@
+{
+  "name": "Statis Pro 2nd & 3rd Edition",
+  "version": "1987",
+  "source": "Hard copy deck from 1987",
+  "data_csv": "cards.csv",
+  "row_modifications": {
+    "179": {
+      "E-2B,E-3B,E-SS": "Blank but not obvious how to fill so left empty"
+    },
+    "332": {
+      "E-1B,E-2B,E-3B,E-SS": "Blank but not obvious how to fill so left empty"
+    },
+    "344": {
+      "E-2B,E-3B,E-SS": "Blank but not obvious how to fill so left empty"
+    }
+  },
+  "layout_json": "layout.json"
+}

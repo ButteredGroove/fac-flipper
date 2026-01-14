@@ -252,6 +252,18 @@ body {
   gap: 6px;
 }
 
+.kv-list--left .kv-item {
+  justify-content: flex-start;
+}
+
+.kv-list--left .kv-label {
+  min-width: var(--kv-label-width, 3ch);
+}
+
+.kv-list--left .kv-value {
+  text-align: left;
+}
+
 .kv-item--solo {
   grid-column: 1 / -1;
   justify-content: flex-start;

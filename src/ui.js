@@ -202,6 +202,12 @@ function renderCardView(frameEl, cardEl, layout, card, placeholderText) {
     if (block.type === "kv") {
       const list = document.createElement("div");
       list.className = "kv-list";
+      if (block.styles?.valueAlign === "left") {
+        list.classList.add("kv-list--left");
+      }
+      if (block.styles?.labelWidth) {
+        list.style.setProperty("--kv-label-width", block.styles.labelWidth);
+      }
       for (const item of block.items || []) {
         const value = getValue(card[item.field]);
         const row = document.createElement("div");

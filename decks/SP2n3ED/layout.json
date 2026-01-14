@@ -1,0 +1,60 @@
+{
+  "card": {
+    "orientation": "portrait",
+    "grid": { "cols": 12, "rows": 16 },
+    "size": { "width": 250 },
+    "text_scale": 1
+  },
+  "blocks": [
+    {
+      "id": "meta",
+      "type": "kv",
+      "x": 2,
+      "y": 1,
+      "w": 10,
+      "h": 4,
+      "items": [
+        { "label": "PB", "field": "PB" },
+        { "label": "Random", "field": "Random" },
+        { "label": "CD", "field": "CD" },
+        { "label": "Pitch", "field": "Pitch" },
+        { "label": "Error", "field": "Error" }
+      ]
+    },
+    {
+      "id": "errors",
+      "type": "kv",
+      "title": "ERROR ON FIELDER",
+      "x": 2,
+      "y": 6,
+      "w": 10,
+      "h": 4,
+      "items": [
+        { "label": "P, C", "field": "E-P" },
+        { "label": "2B, 3B, SS", "field": "E-2B" },
+        { "label": "1B", "field": "E-1B" },
+        { "label": "OF", "field": "E-OF" }
+      ]
+    },
+    {
+      "id": "out",
+      "type": "kv",
+      "title": "OUT SEQUENCE",
+      "x": 2,
+      "y": 10,
+      "w": 10,
+      "h": 7,
+      "styles": { "valueAlign": "left", "labelWidth": "3ch" },
+      "items": [
+        { "label": "P", "field": "P" },
+        { "label": " ", "field": "" },
+        { "label": "LN", "field": "LN" },
+        { "label": "LP", "field": "LP" },
+        { "label": "SN", "field": "SN" },
+        { "label": "SP", "field": "SP" },
+        { "label": "RN", "field": "RN" },
+        { "label": "RP", "field": "RP" }
+      ]
+    }
+  ]
+}
