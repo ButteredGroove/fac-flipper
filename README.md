@@ -6,11 +6,11 @@
 
 ## Overview
 
-**fac-flipper** is a lightweight, data-driven web interface for drawing and viewing Fast Action Cards used in tabletop baseball simulations.
+**fac-flipper** is a lightweight, data-driven web interface for drawing and viewing cards used in baseball simulation boardgames.
 
 This project focuses on **presentation and interaction**, not game logic. Its sole responsibility is to draw a card from a deck and render it cleanly and accurately according to a declarative layout.
 
-Version **v0.0.7** establishes the core architecture and UI.
+Version **v0.0.8** establishes the core architecture and UI.
 
 ## Live site
 
@@ -20,7 +20,7 @@ Version **v0.0.7** establishes the core architecture and UI.
 
 ## Why this exists
 
-Fast Action Cards are fundamental to many baseball sims, but digital implementations are often:
+Cards are often fundamental to baseball sims, but digital implementations are often:
 
 - tightly coupled to specific rule sets
 - visually rigid
@@ -37,7 +37,7 @@ Fast Action Cards are fundamental to many baseball sims, but digital implementat
 
 ---
 
-## Features (v0.0.7)
+## Features (v0.0.8)
 
 - Draw cards from FAC decks
 - With- or without-replacement draw modes
@@ -48,8 +48,6 @@ Fast Action Cards are fundamental to many baseball sims, but digital implementat
 - Recent draw history
 - Click history entries to preview previous cards
 - Keyboard shortcuts for fast interaction
-- Confirmation dialogs for reset, reshuffle, and deck changes
-- About dialog with app metadata and support link
 
 ---
 
@@ -69,7 +67,8 @@ Fast Action Cards are fundamental to many baseball sims, but digital implementat
 
 This repository includes ready-to-use decks for:
 
-- **SP4ED** (v2022)
+- **Statis Pro 4th Edition** (v2022)
+- **Statis Pro 2nd & 3rd Editions** (v1987)
 
 Each deck is implemented using the same underlying data and layout system, demonstrating how different FAC formats can coexist without changes to application code.
 
@@ -104,6 +103,10 @@ fac-flipper/
     utils.js
   decks/
     index.json
+    SP2n3ED/
+      deck.json
+      cards.csv
+      layout.json
     SP4ED/
       deck.json
       cards.csv
@@ -197,8 +200,8 @@ card_id,pb,rn,pitch,error_trigger,out_primary_rp,out_primary_rn
 Layouts declare **how** fields are rendered, not what they mean.
 
 - Supports:
-  - key-value blocks (meta, errors, notes)
-  - table blocks (e.g., OUT SEQUENCE)
+  - key-value blocks (meta, errors, sequences, notes)
+  - table blocks (rows + columns)
 - Blocks specify position, size, and which fields to display
 - Layouts may omit blocks entirely if a deck does not use them
 
@@ -208,6 +211,7 @@ Table cell resolution uses this naming convention:
 - `{field_prefix}all` for defaults (optional)
 
 Layouts can optionally style values with simple color rules. Table columns can also style headers with `headerStyles`.
+Key-value blocks can opt into left-aligned values and fixed label widths using `block.styles`.
 
 ```json
 {
@@ -220,6 +224,15 @@ Layouts can optionally style values with simple color rules. Table columns can a
   },
   "headerStyles": {
     "color": "#dc2626"
+  }
+}
+```
+
+```json
+{
+  "styles": {
+    "valueAlign": "left",
+    "labelWidth": "3ch"
   }
 }
 ```
@@ -251,7 +264,7 @@ sure to update to point to your counter.
 
 ## Status
 
-**v0.0.7** establishes:
+**v0.0.8** establishes:
 
 - core UI
 - deck loading
