@@ -35,6 +35,8 @@ const state = {
   history: [],
   withoutReplacement: false,
   shoe: [],
+  deckLoading: false,
+  deckLoadToken: 0,
   modalOpen: false,
   modalOnConfirm: null,
   modalOnCancel: null,

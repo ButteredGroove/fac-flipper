@@ -35,6 +35,11 @@ function renderDeckList(onSelectDeck) {
   });
 }
 
+function setDeckSelectionEnabled(enabled) {
+  elements.deckList.classList.toggle("is-disabled", !enabled);
+  elements.deckList.setAttribute("aria-disabled", String(!enabled));
+}
+
 function highlightDeck(index) {
   const items = elements.deckList.querySelectorAll(".deck-item");
   for (const item of items) {
@@ -437,6 +442,7 @@ export {
   renderDeckList,
   renderHistory,
   renderPreviewCard,
+  setDeckSelectionEnabled,
   setDrawEnabled,
   updateDeckDisplay,
   updateRemaining,

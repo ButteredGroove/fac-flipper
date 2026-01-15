@@ -31,6 +31,27 @@ const flushPromises = () =>
     setTimeout(resolve, 0);
   });
 
+const deckLoads = new Map();
+
+const createDeferred = () => {
+  let resolve;
+  const promise = new Promise((resolvePromise) => {
+    resolve = resolvePromise;
+  });
+  return { promise, resolve };
+};
+
+const getDeferred = (name) => {
+  if (!deckLoads.has(name)) {
+    deckLoads.set(name, createDeferred());
+  }
+  return deckLoads.get(name);
+};
+
+const resolveLoad = (name) => {
+  getDeferred(name).resolve();
+};
+
 vi.mock("../src/ui.js", () => ({
   applyLayoutVars: vi.fn(),
   closeModal: vi.fn(),
@@ -57,7 +78,16 @@ vi.mock("../src/ui.js", () => ({
 }));
 
 vi.mock("../src/deck.js", () => ({
-  ensureDeckLoaded: vi.fn(async () => {}),
+  ensureDeckLoaded: vi.fn((deck) => {
+    if (deck.cards && deck.layout) {
+      return Promise.resolve();
+    }
+    const deferred = getDeferred(deck.name);
+    return deferred.promise.then(() => {
+      deck.cards = [{ __id: "001" }];
+      deck.layout = { name: deck.name };
+    });
+  }),
   fetchJson: vi.fn(async () => ({
     decks: ["decks/one/deck.json", "decks/two/deck.json"],
   })),
@@ -70,8 +100,8 @@ vi.mock("../src/deck.js", () => ({
       version: "1.0",
       dataCsv: "cards.csv",
       layoutJson: "layout.json",
-      cards: [{ __id: "001" }, { __id: "002" }],
-      layout: {},
+      cards: null,
+      layout: null,
     };
   }),
   shuffle: vi.fn((list) => list),
@@ -80,17 +110,20 @@ vi.mock("../src/deck.js", () => ({
 async function setupApp() {
   document.body.innerHTML = fixture;
   vi.resetModules();
-  await import("../app.js");
+  const appPromise = import("../app.js");
+  resolveLoad("Deck One");
+  await appPromise;
   const ui = await import("../src/ui.js");
   const stateModule = await import("../src/state.js");
   await flushPromises();
   await flushPromises();
-  return { ui, state: stateModule.state, elements: stateModule.elements };
+  return { ui, state: stateModule.state };
 }
 
-describe("confirmation dialogs", () => {
+describe("deck load guards", () => {
   beforeEach(() => {
     document.body.innerHTML = fixture;
+    deckLoads.clear();
   });
 
   afterEach(() => {
@@ -98,51 +131,33 @@ describe("confirmation dialogs", () => {
     vi.clearAllMocks();
   });
 
-  it("skips deck change confirmation when history is empty", async () => {
+  it("ignores stale deck load completions", async () => {
     const { ui, state } = await setupApp();
     const onSelectDeck = ui.renderDeckList.mock.calls[0][0];
 
-    state.history = [];
-    ui.openModal.mockClear();
+    ui.renderCard.mockClear();
+    ui.setDrawEnabled.mockClear();
+
     onSelectDeck(1);
     await flushPromises();
 
-    expect(ui.openModal).not.toHaveBeenCalled();
-    expect(state.currentDeckIndex).toBe(1);
-  });
-
-  it("shows deck change confirmation when history has entries", async () => {
-    const { ui, state } = await setupApp();
-    const onSelectDeck = ui.renderDeckList.mock.calls[0][0];
-
-    state.history = [{ id: "001", card: {} }];
-    ui.openModal.mockClear();
-    onSelectDeck(1);
+    onSelectDeck(0);
+    await flushPromises();
     await flushPromises();
 
-    expect(ui.openModal).toHaveBeenCalled();
+    const renderCardCount = ui.renderCard.mock.calls.length;
+    const drawEnabledCount = ui.setDrawEnabled.mock.calls.filter(
+      ([enabled]) => enabled,
+    ).length;
+
+    resolveLoad("Deck Two");
+    await flushPromises();
+    await flushPromises();
+
     expect(state.currentDeckIndex).toBe(0);
-  });
-
-  it("skips reset and reshuffle confirmations when history is empty", async () => {
-    const { ui, state, elements } = await setupApp();
-
-    state.history = [];
-    ui.openModal.mockClear();
-    elements.resetButtonTop.click();
-    elements.reshuffleButton.click();
-
-    expect(ui.openModal).not.toHaveBeenCalled();
-  });
-
-  it("shows reset and reshuffle confirmations when history has entries", async () => {
-    const { ui, state, elements } = await setupApp();
-
-    state.history = [{ id: "001", card: {} }];
-    ui.openModal.mockClear();
-    elements.resetButtonTop.click();
-    elements.reshuffleButton.click();
-
-    expect(ui.openModal).toHaveBeenCalledTimes(2);
+    expect(ui.renderCard.mock.calls.length).toBe(renderCardCount);
+    expect(
+      ui.setDrawEnabled.mock.calls.filter(([enabled]) => enabled).length,
+    ).toBe(drawEnabledCount);
   });
 });
