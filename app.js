@@ -17,6 +17,7 @@ import {
   renderDeckList,
   renderHistory,
   renderPreviewCard,
+  setDeckSelectionEnabled,
   setDrawEnabled,
   updateDeckDisplay,
   updateRemaining,
@@ -178,6 +179,12 @@ async function selectDeck(index) {
     return;
   }
 
+  state.deckLoadToken += 1;
+  const loadToken = state.deckLoadToken;
+  state.deckLoading = true;
+  setDeckSelectionEnabled(false);
+  setDrawEnabled(false);
+
   state.currentDeck = deck;
   state.currentDeckIndex = index;
   state.currentCard = null;
@@ -187,13 +194,23 @@ async function selectDeck(index) {
   highlightDeck(index);
   clearPreview();
 
-  await ensureDeckLoaded(deck);
-  const layoutMetrics = getLayoutMetrics(deck.layout);
-  applyLayoutVars(elements.cardFrame, elements.card, layoutMetrics);
-  applyLayoutVars(elements.previewFrame, elements.previewCard, layoutMetrics);
-  resetShoe();
-  renderCard();
-  setDrawEnabled(true);
+  try {
+    await ensureDeckLoaded(deck);
+    if (state.deckLoadToken !== loadToken) {
+      return;
+    }
+    const layoutMetrics = getLayoutMetrics(deck.layout);
+    applyLayoutVars(elements.cardFrame, elements.card, layoutMetrics);
+    applyLayoutVars(elements.previewFrame, elements.previewCard, layoutMetrics);
+    resetShoe();
+    renderCard();
+    setDrawEnabled(true);
+  } finally {
+    if (state.deckLoadToken === loadToken) {
+      state.deckLoading = false;
+      setDeckSelectionEnabled(true);
+    }
+  }
 }
 
 function drawCard() {

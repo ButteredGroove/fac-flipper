@@ -340,6 +340,15 @@ body {
   gap: 6px;
 }
 
+.deck-list.is-disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.deck-list.is-disabled .deck-item {
+  cursor: not-allowed;
+}
+
 .deck-item {
   padding: 10px 12px;
   border-radius: 10px;
