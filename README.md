@@ -10,7 +10,7 @@
 
 This project focuses on **presentation and interaction**, not game logic. Its sole responsibility is to draw a card from a deck and render it cleanly and accurately according to a declarative layout.
 
-Version **v0.0.8** establishes the core architecture and UI.
+Version **v0.0.9** establishes the core architecture and UI.
 
 ## Live site
 
@@ -37,7 +37,7 @@ Cards are often fundamental to baseball sims, but digital implementations are of
 
 ---
 
-## Features (v0.0.8)
+## Features (v0.0.9)
 
 - Draw cards from FAC decks
 - With- or without-replacement draw modes
@@ -264,7 +264,7 @@ sure to update to point to your counter.
 
 ## Status
 
-**v0.0.8** establishes:
+**v0.0.9** establishes:
 
 - core UI
 - deck loading
