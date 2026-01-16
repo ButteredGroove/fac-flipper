@@ -54,7 +54,7 @@ Cards are often fundamental to baseball sims, but digital implementations are of
 - Click the card or press Space/Enter to draw.
 - Press `R` or click Reshuffle to reshuffle without clearing history (confirmation required).
 - Use the Reset button to reshuffle and clear history (confirmation required).
-- Click a different deck to switch (confirmation required).
+- Click a different deck (or focus it and press Enter/Space) to switch (confirmation required).
 - Clicking the active deck does nothing.
 - Click a history entry to preview it alongside the current card.
 - Click About for version, author, and support link.

@@ -1,5 +1,5 @@
 const APP_NAME = "fac-flipper";
-const APP_VERSION = "0.0.13";
+const APP_VERSION = "0.0.14";
 const APP_AUTHOR = "ButteredGroove";
 const APP_ISSUES_URL = "https://github.com/ButteredGroove/fac-flipper/issues";
 const APP_SHORTCUTS = "Space/Enter draws, R reshuffles";
