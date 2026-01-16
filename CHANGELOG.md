@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ## Fixed
 
+- Validate deck manifests for required fields ([#24](https://github.com/ButteredGroove/fac-flipper/issues/24))
 - Surface deck load failures in `selectDeck` ([#23](https://github.com/ButteredGroove/fac-flipper/issues/23))
 - Guard deck selection against concurrent loads ([#22](https://github.com/ButteredGroove/fac-flipper/issues/22))
 - Social image fails to display ([#32](https://github.com/ButteredGroove/fac-flipper/issues/32))

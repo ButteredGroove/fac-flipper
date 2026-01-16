@@ -19,13 +19,22 @@ function renderDeckList(onSelectDeck) {
     const item = document.createElement("li");
     item.className = "deck-item";
     item.dataset.index = String(index);
-    const version = document.createElement("span");
-    version.className = "deck-item-version";
-    version.textContent = formatVersion(deck.version);
     const name = document.createElement("span");
-    name.textContent = deck.name;
+    name.className = "deck-item-name";
+    name.textContent = deck.name || "Invalid deck";
     item.appendChild(name);
-    item.appendChild(version);
+    if (deck.loadError) {
+      item.classList.add("is-error");
+      const error = document.createElement("span");
+      error.className = "deck-item-error";
+      error.textContent = deck.loadError;
+      item.appendChild(error);
+    } else {
+      const version = document.createElement("span");
+      version.className = "deck-item-version";
+      version.textContent = formatVersion(deck.version);
+      item.appendChild(version);
+    }
     if (onSelectDeck) {
       item.addEventListener("click", () => {
         onSelectDeck(index);
