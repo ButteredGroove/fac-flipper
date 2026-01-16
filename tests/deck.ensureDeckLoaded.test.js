@@ -64,12 +64,14 @@ describe("ensureDeckLoaded", () => {
       layoutJson: "https://example.com/layout.json",
       cards: null,
       layout: null,
+      parseWarnings: [],
     };
 
     await ensureDeckLoaded(deck);
 
     expect(deck.cards).toHaveLength(2);
     expect(deck.layout).toEqual(layout);
+    expect(deck.parseWarnings).toEqual([]);
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
@@ -88,6 +90,7 @@ describe("ensureDeckLoaded", () => {
       layoutJson: "https://example.com/layout.json",
       cards: null,
       layout: null,
+      parseWarnings: [],
       loadError: "Deck manifest at https://example.com/deck.json is missing",
     };
 
@@ -110,6 +113,7 @@ describe("ensureDeckLoaded", () => {
       layoutJson: "https://example.com/layout.json",
       cards: [{ __id: "001" }],
       layout: { rows: [] },
+      parseWarnings: [],
     };
 
     await ensureDeckLoaded(deck);

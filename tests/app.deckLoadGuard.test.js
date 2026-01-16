@@ -70,6 +70,7 @@ vi.mock("../src/ui.js", () => ({
   renderDeckError: vi.fn(),
   renderDeckLoadError: vi.fn(),
   renderDeckList: vi.fn(),
+  renderDeckWarning: vi.fn(),
   renderHistory: vi.fn(),
   renderPreviewCard: vi.fn(),
   setDeckControlsEnabled: vi.fn(),
@@ -104,6 +105,7 @@ vi.mock("../src/deck.js", () => ({
       layoutJson: "layout.json",
       cards: null,
       layout: null,
+      parseWarnings: [],
     };
   }),
   shuffle: vi.fn((list) => list),

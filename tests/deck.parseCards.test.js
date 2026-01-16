@@ -16,7 +16,7 @@ describe("parseCards", () => {
 
   it("parses CSV rows into card objects", () => {
     const csv = "card_id,name,notes\nA1,Alpha,First\nB2,Beta,Second";
-    const cards = parseCards(csv);
+    const { cards, warnings } = parseCards(csv);
 
     expect(cards).toHaveLength(2);
     expect(cards[0]).toMatchObject({
@@ -31,18 +31,19 @@ describe("parseCards", () => {
       notes: "Second",
       __id: "B2",
     });
+    expect(warnings).toEqual([]);
   });
 
   it("skips empty or whitespace-only rows", () => {
     const csv = "card_id,name\nA1,Alpha\n,\n  ,   \nB2,Beta";
-    const cards = parseCards(csv);
+    const { cards } = parseCards(csv);
 
     expect(cards.map((card) => card.name)).toEqual(["Alpha", "Beta"]);
   });
 
   it("uses card_id when present and falls back to a padded index", () => {
     const csv = "card_id,name\n  007  ,Bond\n,NoId";
-    const cards = parseCards(csv);
+    const { cards } = parseCards(csv);
 
     expect(cards[0].__id).toBe("007");
     expect(cards[1].__id).toBe("002");
@@ -50,7 +51,7 @@ describe("parseCards", () => {
 
   it("trims headers and fills missing cells with empty strings", () => {
     const csv = " card_id , ,name\n001,,Alpha\n002";
-    const cards = parseCards(csv);
+    const { cards } = parseCards(csv);
 
     expect(cards).toHaveLength(2);
     expect(cards[0].card_id).toBe("001");
@@ -85,9 +86,14 @@ describe("parseCards", () => {
     };
 
     try {
-      parseCards("card_id\n001");
+      const { warnings } = parseCards("card_id\n001");
       expect(warnSpy).toHaveBeenCalledWith(
         "CSV parse errors:",
+        expect.arrayContaining([
+          expect.objectContaining({ type: "Quotes", code: "MissingQuotes" }),
+        ]),
+      );
+      expect(warnings).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ type: "Quotes", code: "MissingQuotes" }),
         ]),

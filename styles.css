@@ -75,6 +75,23 @@ body {
   color: var(--muted);
 }
 
+.deck-warning {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.deck-warning[hidden] {
+  display: none;
+}
+
 .content {
   display: flex;
   gap: var(--space-3);

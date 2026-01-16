@@ -5,6 +5,7 @@ const fixture = `
   <div id="deckName"></div>
   <div id="deckVersion"></div>
   <div id="deckDisplay"></div>
+  <div id="deckWarning"></div>
   <div id="cardFrame" tabindex="0"></div>
   <div id="card"></div>
   <div id="previewColumn"></div>
@@ -61,30 +62,25 @@ vi.mock("../src/ui.js", () => ({
 
 vi.mock("../src/deck.js", () => ({
   ensureDeckLoaded: vi.fn((deck) => {
-    if (deck.name === "Bad Deck") {
-      return Promise.reject(new Error("Missing deck files"));
-    }
     deck.cards = [{ __id: "001" }];
     deck.layout = {};
+    deck.parseWarnings = [{ type: "Quotes", code: "MissingQuotes" }];
     return Promise.resolve();
   }),
   fetchJson: vi.fn(async () => ({
-    decks: ["decks/bad/deck.json", "decks/good/deck.json"],
+    decks: ["decks/warn/deck.json"],
   })),
-  loadDeckDefinition: vi.fn(async (path) => {
-    const isBad = path.includes("bad");
-    return {
-      path,
-      deckUrl: path,
-      name: isBad ? "Bad Deck" : "Good Deck",
-      version: "1.0",
-      dataCsv: "cards.csv",
-      layoutJson: "layout.json",
-      cards: null,
-      layout: null,
-      parseWarnings: [],
-    };
-  }),
+  loadDeckDefinition: vi.fn(async (path) => ({
+    path,
+    deckUrl: path,
+    name: "Warn Deck",
+    version: "1.0",
+    dataCsv: "cards.csv",
+    layoutJson: "layout.json",
+    cards: null,
+    layout: null,
+    parseWarnings: [],
+  })),
   shuffle: vi.fn((list) => list),
 }));
 
@@ -93,13 +89,12 @@ async function setupApp() {
   vi.resetModules();
   await import("../app.js");
   const ui = await import("../src/ui.js");
-  const stateModule = await import("../src/state.js");
   await flushPromises();
   await flushPromises();
-  return { ui, state: stateModule.state };
+  return { ui };
 }
 
-describe("deck load failures", () => {
+describe("deck parse warnings", () => {
   beforeEach(() => {
     document.body.innerHTML = fixture;
   });
@@ -109,31 +104,13 @@ describe("deck load failures", () => {
     vi.clearAllMocks();
   });
 
-  it("shows a clear error and keeps controls disabled", async () => {
-    const { ui, state } = await setupApp();
+  it("shows a warning when PapaParse reports errors", async () => {
+    const { ui } = await setupApp();
 
-    expect(ui.renderDeckLoadError).toHaveBeenCalledWith(
-      expect.stringContaining("Unable to load deck"),
+    expect(ui.renderDeckWarning).toHaveBeenLastCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({ type: "Quotes", code: "MissingQuotes" }),
+      ]),
     );
-    expect(ui.setDeckControlsEnabled).toHaveBeenCalledWith(false);
-    expect(ui.setDrawEnabled).toHaveBeenCalledWith(false);
-    expect(ui.setDeckSelectionEnabled).toHaveBeenLastCalledWith(true);
-    expect(state.deckLoadError).toContain("Unable to load deck");
-  });
-
-  it("recovers when a valid deck is selected", async () => {
-    const { ui, state } = await setupApp();
-    const onSelectDeck = ui.renderDeckList.mock.calls[0][0];
-
-    ui.setDrawEnabled.mockClear();
-    ui.setDeckControlsEnabled.mockClear();
-
-    onSelectDeck(1);
-    await flushPromises();
-    await flushPromises();
-
-    expect(state.deckLoadError).toBeNull();
-    expect(ui.setDeckControlsEnabled).toHaveBeenLastCalledWith(true);
-    expect(ui.setDrawEnabled).toHaveBeenLastCalledWith(true);
   });
 });

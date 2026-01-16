@@ -16,6 +16,7 @@ import {
   renderDeckError,
   renderDeckList,
   renderDeckLoadError,
+  renderDeckWarning,
   renderHistory,
   renderPreviewCard,
   setDeckControlsEnabled,
@@ -178,6 +179,7 @@ function createInvalidDeckEntry(path, error) {
     layoutJson: null,
     cards: null,
     layout: null,
+    parseWarnings: [],
     loadError: getDeckDefinitionErrorMessage(error),
   };
 }
@@ -214,6 +216,7 @@ async function loadDeckManifest() {
       await selectDeck(0);
     }
   } catch (error) {
+    renderDeckWarning([]);
     renderDeckError(error.message);
   }
 }
@@ -254,6 +257,7 @@ async function selectDeck(index) {
   updateDeckDisplay(deck);
   highlightDeck(index);
   clearPreview();
+  renderDeckWarning([]);
 
   try {
     await ensureDeckLoaded(deck);
@@ -265,6 +269,7 @@ async function selectDeck(index) {
     applyLayoutVars(elements.previewFrame, elements.previewCard, layoutMetrics);
     resetShoe();
     renderCard();
+    renderDeckWarning(deck.parseWarnings);
     setDrawEnabled(true);
     setDeckControlsEnabled(true);
     state.deckLoadError = null;
@@ -277,6 +282,7 @@ async function selectDeck(index) {
     const message = getDeckLoadErrorMessage(error, deck);
     state.deckLoadError = message;
     renderDeckLoadError(message);
+    renderDeckWarning([]);
     setDrawEnabled(false);
     setDeckControlsEnabled(false);
   } finally {

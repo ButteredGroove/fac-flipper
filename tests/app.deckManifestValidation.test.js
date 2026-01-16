@@ -63,6 +63,7 @@ vi.mock("../src/ui.js", () => ({
   renderDeckError: vi.fn(),
   renderDeckLoadError: vi.fn(),
   renderDeckList: vi.fn(),
+  renderDeckWarning: vi.fn(),
   renderHistory: vi.fn(),
   renderPreviewCard: vi.fn(),
   setDeckControlsEnabled: vi.fn(),
@@ -117,6 +118,7 @@ describe("deck manifest validation", () => {
         layoutJson: "layout.json",
         cards: null,
         layout: null,
+        parseWarnings: [],
       });
     });
 
