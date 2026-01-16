@@ -2,7 +2,8 @@ function formatVersion(version) {
   if (!version) {
     return "";
   }
-  return version.startsWith("v") ? version : `v${version}`;
+  const normalized = String(version);
+  return normalized.startsWith("v") ? normalized : `v${normalized}`;
 }
 
 function formatTime(date) {

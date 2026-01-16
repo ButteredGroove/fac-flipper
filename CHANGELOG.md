@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 
 ## Fixed
 
+- Harden formatVersion for numeric deck versions ([#44](https://github.com/ButteredGroove/fac-flipper/issues/44))
 - Surface CSV parse warnings in the UI ([#26](https://github.com/ButteredGroove/fac-flipper/issues/26))
 - Improve fetch errors with HTTP status details and clearer network failures ([#25](https://github.com/ButteredGroove/fac-flipper/issues/25))
 - Validate deck manifests for required fields ([#24](https://github.com/ButteredGroove/fac-flipper/issues/24))

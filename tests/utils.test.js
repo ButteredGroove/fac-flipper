@@ -10,6 +10,7 @@ describe("utils", () => {
   it("formats versions with a leading v when needed", () => {
     expect(formatVersion("")).toBe("");
     expect(formatVersion(null)).toBe("");
+    expect(formatVersion(2024)).toBe("v2024");
     expect(formatVersion("1.2.3")).toBe("v1.2.3");
     expect(formatVersion("v1.2.3")).toBe("v1.2.3");
   });

@@ -262,7 +262,7 @@ sure to update to point to your counter.
 
 ## Status
 
-Current version: **v0.0.13**.
+Current version: **v0.0.15**.
 
 This release establishes:
 
