@@ -1,6 +1,6 @@
 {
   "name": "fac-flipper",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "private": true,
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
