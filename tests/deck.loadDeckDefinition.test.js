@@ -67,4 +67,62 @@ describe("loadDeckDefinition", () => {
       "https://example.com/decks/test/layouts/layout.json",
     );
   });
+
+  it("throws when data_csv is missing", async () => {
+    const deckJson = {
+      layout_json: "layout.json",
+    };
+    const fetchMock = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => deckJson,
+      }),
+    );
+    globalThis.fetch = fetchMock;
+
+    const path = "https://example.com/decks/test/deck.json";
+
+    await expect(loadDeckDefinition(path)).rejects.toThrow(
+      `Deck manifest at ${path} is missing or invalid required field: data_csv.`,
+    );
+  });
+
+  it("throws when layout_json is missing", async () => {
+    const deckJson = {
+      data_csv: "cards.csv",
+    };
+    const fetchMock = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => deckJson,
+      }),
+    );
+    globalThis.fetch = fetchMock;
+
+    const path = "https://example.com/decks/test/deck.json";
+
+    await expect(loadDeckDefinition(path)).rejects.toThrow(
+      `Deck manifest at ${path} is missing or invalid required field: layout_json.`,
+    );
+  });
+
+  it("throws when required fields are invalid", async () => {
+    const deckJson = {
+      data_csv: " ",
+      layout_json: 123,
+    };
+    const fetchMock = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => deckJson,
+      }),
+    );
+    globalThis.fetch = fetchMock;
+
+    const path = "https://example.com/decks/test/deck.json";
+
+    await expect(loadDeckDefinition(path)).rejects.toThrow(
+      `Deck manifest at ${path} is missing or invalid required fields: data_csv, layout_json.`,
+    );
+  });
 });

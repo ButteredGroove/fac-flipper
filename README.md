@@ -10,8 +10,6 @@
 
 This project focuses on **presentation and interaction**, not game logic. Its sole responsibility is to draw a card from a deck and render it cleanly and accurately according to a declarative layout.
 
-Version **v0.0.10** establishes the core architecture and UI.
-
 ## Live site
 
 <https://butteredgroove.github.io/fac-flipper/>
@@ -37,7 +35,7 @@ Cards are often fundamental to baseball sims, but digital implementations are of
 
 ---
 
-## Features (v0.0.10)
+## Features
 
 - Draw cards from FAC decks
 - With- or without-replacement draw modes
@@ -264,11 +262,13 @@ sure to update to point to your counter.
 
 ## Status
 
-**v0.0.10** establishes:
+Current version: **v0.0.11**.
+
+This release establishes:
 
 - core UI
 - deck loading
 - layout-driven rendering
 - draw/shuffle behavior
 
-Future versions may improve polish, validation, and tooling, but the architectural principles are intended to remain stable.
+Future versions may improve polish and tooling, but the architectural principles are intended to remain stable.

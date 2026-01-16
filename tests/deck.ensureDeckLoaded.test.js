@@ -73,6 +73,28 @@ describe("ensureDeckLoaded", () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
+  it("throws when deck has a load error", async () => {
+    const fetchMock = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        text: async () => "",
+        json: async () => ({}),
+      }),
+    );
+    globalThis.fetch = fetchMock;
+
+    const deck = {
+      dataCsv: "https://example.com/data.csv",
+      layoutJson: "https://example.com/layout.json",
+      cards: null,
+      layout: null,
+      loadError: "Deck manifest at https://example.com/deck.json is missing",
+    };
+
+    await expect(ensureDeckLoaded(deck)).rejects.toThrow(deck.loadError);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it("does not refetch when deck is already loaded", async () => {
     const fetchMock = vi.fn(() =>
       Promise.resolve({

@@ -154,6 +154,34 @@ function requestDeckChange(index) {
   });
 }
 
+function getDeckDefinitionErrorMessage(error) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return String(error);
+}
+
+function createInvalidDeckEntry(path, error) {
+  const deckPath = typeof path === "string" ? path : String(path ?? "");
+  let deckUrl = deckPath;
+  try {
+    deckUrl = new URL(deckPath, window.location.href).toString();
+  } catch {
+    // Fallback to the raw path when URL parsing fails.
+  }
+  return {
+    path: deckPath,
+    deckUrl,
+    name: "Invalid deck",
+    version: "",
+    dataCsv: null,
+    layoutJson: null,
+    cards: null,
+    layout: null,
+    loadError: getDeckDefinitionErrorMessage(error),
+  };
+}
+
 async function loadDeckManifest() {
   setDrawEnabled(false);
   setDeckControlsEnabled(false);
@@ -163,13 +191,25 @@ async function loadDeckManifest() {
       throw new Error("Deck manifest is missing a decks array.");
     }
 
-    const deckEntries = await Promise.all(
+    const deckResults = await Promise.allSettled(
       manifest.decks.map((path) => loadDeckDefinition(path)),
     );
+
+    const deckEntries = deckResults.map((result, index) => {
+      if (result.status === "fulfilled") {
+        return result.value;
+      }
+      return createInvalidDeckEntry(manifest.decks[index], result.reason);
+    });
 
     state.decks = deckEntries;
     renderDeckList(requestDeckChange);
 
+    const firstValidDeck = state.decks.findIndex((deck) => !deck.loadError);
+    if (firstValidDeck >= 0) {
+      await selectDeck(firstValidDeck);
+      return;
+    }
     if (state.decks.length > 0) {
       await selectDeck(0);
     }

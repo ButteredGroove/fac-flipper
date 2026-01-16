@@ -1,6 +1,23 @@
+function validateDeckManifest(deckJson, deckUrl) {
+  const requiredFields = ["data_csv", "layout_json"];
+  const invalidFields = requiredFields.filter((field) => {
+    const value = deckJson?.[field];
+    return typeof value !== "string" || value.trim() === "";
+  });
+  if (invalidFields.length > 0) {
+    const label = invalidFields.length === 1 ? "field" : "fields";
+    throw new Error(
+      `Deck manifest at ${deckUrl} is missing or invalid required ${label}: ${invalidFields.join(
+        ", ",
+      )}.`,
+    );
+  }
+}
+
 async function loadDeckDefinition(path) {
   const deckUrl = new URL(path, window.location.href).toString();
   const deckJson = await fetchJson(deckUrl);
+  validateDeckManifest(deckJson, deckUrl);
   return {
     path,
     deckUrl,
@@ -14,6 +31,9 @@ async function loadDeckDefinition(path) {
 }
 
 async function ensureDeckLoaded(deck) {
+  if (deck.loadError) {
+    throw new Error(deck.loadError);
+  }
   if (deck.cards && deck.layout) {
     return;
   }
