@@ -29,6 +29,8 @@ jobs:
         run: |
           mkdir -p site
           cp index.html app.js styles.css site/
+          cp favicon.ico favicon-16x16.png favicon-32x32.png apple-touch-icon.png site.webmanifest site/
+          cp android-chrome-192x192.png android-chrome-512x512.png site/
           cp -R src site/src
           cp -R decks site/decks
           cp -R vendor site/vendor
