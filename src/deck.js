@@ -86,19 +86,49 @@ function shuffle(list) {
 }
 
 async function fetchJson(path) {
-  const response = await fetch(path);
-  if (!response.ok) {
-    throw new Error(`Failed to load ${path}`);
-  }
+  const response = await fetchResponse(path);
   return response.json();
 }
 
 async function fetchText(path) {
-  const response = await fetch(path);
-  if (!response.ok) {
-    throw new Error(`Failed to load ${path}`);
-  }
+  const response = await fetchResponse(path);
   return response.text();
+}
+
+function formatHttpError(path, response) {
+  const statusText = response.statusText ? ` ${response.statusText}` : "";
+  return `Failed to load ${path} (HTTP ${response.status}${statusText})`;
+}
+
+function formatNetworkError(path, error) {
+  let reason = "Unknown error";
+  if (error instanceof Error && error.message) {
+    reason = error.message;
+  } else if (typeof error === "string" && error) {
+    reason = error;
+  } else if (
+    error &&
+    typeof error === "object" &&
+    "message" in error &&
+    typeof error.message === "string" &&
+    error.message
+  ) {
+    reason = error.message;
+  }
+  return `Network error while loading ${path}: ${reason}`;
+}
+
+async function fetchResponse(path) {
+  let response;
+  try {
+    response = await fetch(path);
+  } catch (error) {
+    throw new Error(formatNetworkError(path, error));
+  }
+  if (!response.ok) {
+    throw new Error(formatHttpError(path, response));
+  }
+  return response;
 }
 
 export {
