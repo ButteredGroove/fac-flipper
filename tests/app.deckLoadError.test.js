@@ -31,27 +31,6 @@ const flushPromises = () =>
     setTimeout(resolve, 0);
   });
 
-const deckLoads = new Map();
-
-const createDeferred = () => {
-  let resolve;
-  const promise = new Promise((resolvePromise) => {
-    resolve = resolvePromise;
-  });
-  return { promise, resolve };
-};
-
-const getDeferred = (name) => {
-  if (!deckLoads.has(name)) {
-    deckLoads.set(name, createDeferred());
-  }
-  return deckLoads.get(name);
-};
-
-const resolveLoad = (name) => {
-  getDeferred(name).resolve();
-};
-
 vi.mock("../src/ui.js", () => ({
   applyLayoutVars: vi.fn(),
   closeModal: vi.fn(),
@@ -81,24 +60,22 @@ vi.mock("../src/ui.js", () => ({
 
 vi.mock("../src/deck.js", () => ({
   ensureDeckLoaded: vi.fn((deck) => {
-    if (deck.cards && deck.layout) {
-      return Promise.resolve();
+    if (deck.name === "Bad Deck") {
+      return Promise.reject(new Error("Missing deck files"));
     }
-    const deferred = getDeferred(deck.name);
-    return deferred.promise.then(() => {
-      deck.cards = [{ __id: "001" }];
-      deck.layout = { name: deck.name };
-    });
+    deck.cards = [{ __id: "001" }];
+    deck.layout = {};
+    return Promise.resolve();
   }),
   fetchJson: vi.fn(async () => ({
-    decks: ["decks/one/deck.json", "decks/two/deck.json"],
+    decks: ["decks/bad/deck.json", "decks/good/deck.json"],
   })),
   loadDeckDefinition: vi.fn(async (path) => {
-    const suffix = path.includes("two") ? "Two" : "One";
+    const isBad = path.includes("bad");
     return {
       path,
       deckUrl: path,
-      name: `Deck ${suffix}`,
+      name: isBad ? "Bad Deck" : "Good Deck",
       version: "1.0",
       dataCsv: "cards.csv",
       layoutJson: "layout.json",
@@ -112,9 +89,7 @@ vi.mock("../src/deck.js", () => ({
 async function setupApp() {
   document.body.innerHTML = fixture;
   vi.resetModules();
-  const appPromise = import("../app.js");
-  resolveLoad("Deck One");
-  await appPromise;
+  await import("../app.js");
   const ui = await import("../src/ui.js");
   const stateModule = await import("../src/state.js");
   await flushPromises();
@@ -122,10 +97,9 @@ async function setupApp() {
   return { ui, state: stateModule.state };
 }
 
-describe("deck load guards", () => {
+describe("deck load failures", () => {
   beforeEach(() => {
     document.body.innerHTML = fixture;
-    deckLoads.clear();
   });
 
   afterEach(() => {
@@ -133,33 +107,31 @@ describe("deck load guards", () => {
     vi.clearAllMocks();
   });
 
-  it("ignores stale deck load completions", async () => {
+  it("shows a clear error and keeps controls disabled", async () => {
+    const { ui, state } = await setupApp();
+
+    expect(ui.renderDeckLoadError).toHaveBeenCalledWith(
+      expect.stringContaining("Unable to load deck"),
+    );
+    expect(ui.setDeckControlsEnabled).toHaveBeenCalledWith(false);
+    expect(ui.setDrawEnabled).toHaveBeenCalledWith(false);
+    expect(ui.setDeckSelectionEnabled).toHaveBeenLastCalledWith(true);
+    expect(state.deckLoadError).toContain("Unable to load deck");
+  });
+
+  it("recovers when a valid deck is selected", async () => {
     const { ui, state } = await setupApp();
     const onSelectDeck = ui.renderDeckList.mock.calls[0][0];
 
-    ui.renderCard.mockClear();
     ui.setDrawEnabled.mockClear();
+    ui.setDeckControlsEnabled.mockClear();
 
     onSelectDeck(1);
     await flushPromises();
-
-    onSelectDeck(0);
-    await flushPromises();
     await flushPromises();
 
-    const renderCardCount = ui.renderCard.mock.calls.length;
-    const drawEnabledCount = ui.setDrawEnabled.mock.calls.filter(
-      ([enabled]) => enabled,
-    ).length;
-
-    resolveLoad("Deck Two");
-    await flushPromises();
-    await flushPromises();
-
-    expect(state.currentDeckIndex).toBe(0);
-    expect(ui.renderCard.mock.calls.length).toBe(renderCardCount);
-    expect(
-      ui.setDrawEnabled.mock.calls.filter(([enabled]) => enabled).length,
-    ).toBe(drawEnabledCount);
+    expect(state.deckLoadError).toBeNull();
+    expect(ui.setDeckControlsEnabled).toHaveBeenLastCalledWith(true);
+    expect(ui.setDrawEnabled).toHaveBeenLastCalledWith(true);
   });
 });
