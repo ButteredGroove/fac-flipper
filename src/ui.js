@@ -31,10 +31,14 @@ function renderDeckWarning(warnings) {
 
 function renderDeckList(onSelectDeck) {
   elements.deckList.innerHTML = "";
+  const listDisabled = elements.deckList.classList.contains("is-disabled");
   state.decks.forEach((deck, index) => {
-    const item = document.createElement("li");
+    const listItem = document.createElement("li");
+    const item = document.createElement("button");
+    item.type = "button";
     item.className = "deck-item";
     item.dataset.index = String(index);
+    item.disabled = listDisabled;
     const name = document.createElement("span");
     name.className = "deck-item-name";
     name.textContent = deck.name || "Invalid deck";
@@ -56,13 +60,20 @@ function renderDeckList(onSelectDeck) {
         onSelectDeck(index);
       });
     }
-    elements.deckList.appendChild(item);
+    listItem.appendChild(item);
+    elements.deckList.appendChild(listItem);
   });
 }
 
 function setDeckSelectionEnabled(enabled) {
   elements.deckList.classList.toggle("is-disabled", !enabled);
   elements.deckList.setAttribute("aria-disabled", String(!enabled));
+  const items = elements.deckList.querySelectorAll(".deck-item");
+  for (const item of items) {
+    if (item instanceof HTMLButtonElement) {
+      item.disabled = !enabled;
+    }
+  }
 }
 
 function setDeckControlsEnabled(enabled) {

@@ -17,9 +17,27 @@ function isTypingTarget(target) {
   if (!target) {
     return false;
   }
-  const tagName = target.tagName?.toLowerCase();
-  return (
-    tagName === "input" || tagName === "textarea" || target.isContentEditable
+  const element = target instanceof Element ? target : null;
+  if (!element) {
+    return false;
+  }
+  const tagName = element.tagName?.toLowerCase();
+  if (
+    tagName === "input" ||
+    tagName === "textarea" ||
+    tagName === "select" ||
+    tagName === "button" ||
+    element.isContentEditable
+  ) {
+    return true;
+  }
+  if (tagName === "a" && element.getAttribute("href")) {
+    return true;
+  }
+  return Boolean(
+    element.closest(
+      "button, input, textarea, select, option, a[href], [role='button'], [role='link']",
+    ),
   );
 }
 
