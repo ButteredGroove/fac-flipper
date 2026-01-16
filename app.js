@@ -15,8 +15,10 @@ import {
   renderCard,
   renderDeckError,
   renderDeckList,
+  renderDeckLoadError,
   renderHistory,
   renderPreviewCard,
+  setDeckControlsEnabled,
   setDeckSelectionEnabled,
   setDrawEnabled,
   updateDeckDisplay,
@@ -102,7 +104,12 @@ function handleModalOverlayClick() {
 }
 
 function requestReshuffle(clearHistory) {
-  if (!state.currentDeck || state.modalOpen) {
+  if (
+    !state.currentDeck ||
+    state.modalOpen ||
+    state.deckLoading ||
+    state.deckLoadError
+  ) {
     return;
   }
   if (state.history.length === 0) {
@@ -128,7 +135,7 @@ function requestDeckChange(index) {
   if (!deck || state.modalOpen) {
     return;
   }
-  if (state.currentDeckIndex === index) {
+  if (state.currentDeckIndex === index && !state.deckLoadError) {
     return;
   }
   if (state.history.length === 0) {
@@ -149,6 +156,7 @@ function requestDeckChange(index) {
 
 async function loadDeckManifest() {
   setDrawEnabled(false);
+  setDeckControlsEnabled(false);
   try {
     const manifest = await fetchJson("decks/index.json");
     if (!Array.isArray(manifest.decks)) {
@@ -170,20 +178,33 @@ async function loadDeckManifest() {
   }
 }
 
+function getDeckLoadErrorMessage(error, deck) {
+  const detail = error instanceof Error ? error.message : "";
+  const deckName = deck?.name ? ` "${deck.name}"` : "";
+  const base = `Unable to load deck${deckName}.`;
+  const hint = "Select another deck to continue.";
+  if (!detail) {
+    return `${base} ${hint}`;
+  }
+  return `${base} ${detail} ${hint}`;
+}
+
 async function selectDeck(index) {
   const deck = state.decks[index];
   if (!deck) {
     return;
   }
-  if (state.currentDeckIndex === index) {
+  if (state.currentDeckIndex === index && !state.deckLoadError) {
     return;
   }
 
   state.deckLoadToken += 1;
   const loadToken = state.deckLoadToken;
   state.deckLoading = true;
+  state.deckLoadError = null;
   setDeckSelectionEnabled(false);
   setDrawEnabled(false);
+  setDeckControlsEnabled(false);
 
   state.currentDeck = deck;
   state.currentDeckIndex = index;
@@ -205,6 +226,19 @@ async function selectDeck(index) {
     resetShoe();
     renderCard();
     setDrawEnabled(true);
+    setDeckControlsEnabled(true);
+    state.deckLoadError = null;
+  } catch (error) {
+    if (state.deckLoadToken !== loadToken) {
+      return;
+    }
+    state.shoe = [];
+    updateRemaining();
+    const message = getDeckLoadErrorMessage(error, deck);
+    state.deckLoadError = message;
+    renderDeckLoadError(message);
+    setDrawEnabled(false);
+    setDeckControlsEnabled(false);
   } finally {
     if (state.deckLoadToken === loadToken) {
       state.deckLoading = false;
@@ -217,7 +251,9 @@ function drawCard() {
   if (
     !state.currentDeck ||
     !state.currentDeck.cards?.length ||
-    state.modalOpen
+    state.modalOpen ||
+    state.deckLoading ||
+    state.deckLoadError
   ) {
     return;
   }
@@ -274,7 +310,12 @@ function resetShoe() {
 }
 
 function requestReplacementMode(withoutReplacement) {
-  if (state.modalOpen || !state.currentDeck) {
+  if (
+    state.modalOpen ||
+    !state.currentDeck ||
+    state.deckLoading ||
+    state.deckLoadError
+  ) {
     elements.replacementToggleSide.checked = state.withoutReplacement;
     return;
   }
@@ -320,6 +361,9 @@ function addToHistory(card) {
 }
 
 function setPreviewCard(card) {
+  if (state.deckLoading || state.deckLoadError) {
+    return;
+  }
   state.previewCard = card;
   renderPreviewCard();
   renderHistory(setPreviewCard);

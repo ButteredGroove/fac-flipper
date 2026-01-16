@@ -40,6 +40,19 @@ function setDeckSelectionEnabled(enabled) {
   elements.deckList.setAttribute("aria-disabled", String(!enabled));
 }
 
+function setDeckControlsEnabled(enabled) {
+  elements.resetButtonTop.disabled = !enabled;
+  elements.reshuffleButton.disabled = !enabled;
+  elements.replacementToggleSide.disabled = !enabled;
+  elements.clearPreview.disabled = !enabled;
+  elements.historyList.classList.toggle("is-disabled", !enabled);
+  elements.historyList.setAttribute("aria-disabled", String(!enabled));
+  const historyItems = elements.historyList.querySelectorAll(".history-item");
+  for (const item of historyItems) {
+    item.disabled = !enabled;
+  }
+}
+
 function highlightDeck(index) {
   const items = elements.deckList.querySelectorAll(".deck-item");
   for (const item of items) {
@@ -54,6 +67,17 @@ function renderDeckError(message) {
   item.textContent = message;
   elements.deckList.appendChild(item);
   elements.deckName.textContent = "Deck load failed";
+}
+
+function renderDeckLoadError(message) {
+  const text = message || "Unable to load deck. Select another deck.";
+  elements.card.innerHTML = "";
+  const placeholder = document.createElement("div");
+  placeholder.className = "card-placeholder card-error";
+  placeholder.textContent = text;
+  elements.card.appendChild(placeholder);
+  elements.previewColumn.hidden = true;
+  elements.previewCard.innerHTML = "";
 }
 
 function updateRemaining() {
@@ -86,7 +110,9 @@ function renderHistory(onSelectPreview) {
     const row = document.createElement("button");
     row.type = "button";
     row.className = `history-item${isActive ? " is-active" : ""}`;
-    if (onSelectPreview) {
+    const disabled = Boolean(state.deckLoading || state.deckLoadError);
+    row.disabled = disabled;
+    if (onSelectPreview && !disabled) {
       row.addEventListener("click", () => {
         onSelectPreview(entry.card);
       });
@@ -427,6 +453,9 @@ function closeModal() {
 
 function setDrawEnabled(enabled) {
   elements.drawButton.disabled = !enabled;
+  elements.cardFrame.classList.toggle("is-disabled", !enabled);
+  elements.cardFrame.setAttribute("aria-disabled", String(!enabled));
+  elements.cardFrame.tabIndex = enabled ? 0 : -1;
 }
 
 export {
@@ -439,9 +468,11 @@ export {
   renderCard,
   renderCardView,
   renderDeckError,
+  renderDeckLoadError,
   renderDeckList,
   renderHistory,
   renderPreviewCard,
+  setDeckControlsEnabled,
   setDeckSelectionEnabled,
   setDrawEnabled,
   updateDeckDisplay,
