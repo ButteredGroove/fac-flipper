@@ -310,7 +310,7 @@ function drawCard() {
       resetShoe();
       openModal({
         title: "Deck reshuffled",
-        body: "Deck expended, reshuffled.",
+        body: "Deck exhausted, reshuffled.",
       });
     }
     cardIndex = state.shoe.pop();
