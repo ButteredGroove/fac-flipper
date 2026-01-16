@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Add confirmation dialogs ([#15](https://github.com/ButteredGroove/fac-flipper/issues/15))
 - Add basic SEO metadata to `index.html` ([#30](https://github.com/ButteredGroove/fac-flipper/issues/30))
 - Make deck selection keyboard accessible ([#27](https://github.com/ButteredGroove/fac-flipper/issues/27))
+- Add favicon and app icons with manifest wiring ([#39](https://github.com/ButteredGroove/fac-flipper/issues/39))
 
 ## Changed
 
