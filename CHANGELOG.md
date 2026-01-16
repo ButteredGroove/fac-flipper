@@ -32,3 +32,4 @@ All notable changes to this project will be documented in this file.
 
 - Configure and Run Biome for Code Formatting and Linting ([#1](https://github.com/ButteredGroove/fac-flipper/issues/1))
 - Normalize LF for line ending ([#19](https://github.com/ButteredGroove/fac-flipper/issues/19))
+- Expand test coverage for draw/history/rendering/utils ([#29](https://github.com/ButteredGroove/fac-flipper/issues/29))
