@@ -13,6 +13,22 @@ function updateDeckDisplay(deck) {
   elements.deckVersion.textContent = formatVersion(deck.version);
 }
 
+function renderDeckWarning(warnings) {
+  if (!elements.deckWarning) {
+    return;
+  }
+  const count = Array.isArray(warnings) ? warnings.length : 0;
+  if (count > 0) {
+    elements.deckWarning.textContent = `CSV warnings: ${count}`;
+    elements.deckWarning.title = "See console for details.";
+    elements.deckWarning.hidden = false;
+    return;
+  }
+  elements.deckWarning.textContent = "";
+  elements.deckWarning.title = "";
+  elements.deckWarning.hidden = true;
+}
+
 function renderDeckList(onSelectDeck) {
   elements.deckList.innerHTML = "";
   state.decks.forEach((deck, index) => {
@@ -484,6 +500,7 @@ export {
   setDeckControlsEnabled,
   setDeckSelectionEnabled,
   setDrawEnabled,
+  renderDeckWarning,
   updateDeckDisplay,
   updateRemaining,
 };

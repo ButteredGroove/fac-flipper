@@ -27,12 +27,16 @@ async function loadDeckDefinition(path) {
     layoutJson: new URL(deckJson.layout_json, deckUrl).toString(),
     cards: null,
     layout: null,
+    parseWarnings: [],
   };
 }
 
 async function ensureDeckLoaded(deck) {
   if (deck.loadError) {
     throw new Error(deck.loadError);
+  }
+  if (!Array.isArray(deck.parseWarnings)) {
+    deck.parseWarnings = [];
   }
   if (deck.cards && deck.layout) {
     return;
@@ -43,8 +47,9 @@ async function ensureDeckLoaded(deck) {
     fetchJson(deck.layoutJson),
   ]);
 
-  const cards = parseCards(csvText);
+  const { cards, warnings } = parseCards(csvText);
   deck.cards = cards;
+  deck.parseWarnings = warnings;
   deck.layout = layout;
 }
 
@@ -54,15 +59,16 @@ function parseCards(csvText) {
     throw new Error("PapaParse is not available.");
   }
   const result = parser.parse(csvText, { skipEmptyLines: "greedy" });
-  if (result.errors?.length) {
-    console.warn("CSV parse errors:", result.errors);
+  const warnings = Array.isArray(result.errors) ? result.errors : [];
+  if (warnings.length) {
+    console.warn("CSV parse errors:", warnings);
   }
   const rows = Array.isArray(result.data) ? result.data : [];
   if (rows.length === 0) {
-    return [];
+    return { cards: [], warnings };
   }
   const headers = rows[0].map((header) => String(header ?? "").trim());
-  return rows
+  const cards = rows
     .slice(1)
     .filter((row) => row.some((cell) => String(cell ?? "").trim() !== ""))
     .map((row, index) => {
@@ -74,6 +80,7 @@ function parseCards(csvText) {
       card.__id = id || String(index + 1).padStart(3, "0");
       return card;
     });
+  return { cards, warnings };
 }
 
 function shuffle(list) {
