@@ -1,3 +1,7 @@
 {
-  "decks": ["decks/SP4ED/deck.json", "decks/SP2n3ED/deck.json"]
+  "decks": [
+    "decks/SP4ED/deck.json",
+    "decks/SP2n3ED/deck.json",
+    "decks/SPADV/deck.json"
+  ]
 }

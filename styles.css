@@ -228,7 +228,7 @@ body {
   display: grid;
   grid-template-columns: repeat(var(--card-cols, 12), 1fr);
   grid-template-rows: repeat(var(--card-rows, 16), 1fr);
-  padding: var(--space-1);
+  padding: var(--card-pad-y, var(--space-1)) var(--card-pad-x, var(--space-1));
   gap: 0;
 }
 
@@ -328,7 +328,7 @@ body {
   color: var(--muted);
   text-transform: uppercase;
   font-size: calc(11px * var(--card-text-scale, 1));
-  padding: 4px;
+  padding: var(--table-pad-y, 4px) var(--table-pad-x, 4px);
   border-bottom: 1px solid var(--border);
 }
 
@@ -336,13 +336,24 @@ body {
   text-align: left;
   font-weight: 600;
   color: var(--muted);
-  padding: 4px;
+  padding: var(--table-pad-y, 4px) var(--table-pad-x, 4px);
   border-bottom: 1px solid var(--border);
+}
+
+.card-table thead th:first-child,
+.card-table tbody th:first-child {
+  min-width: var(--table-rowhead-width, auto);
+  padding-left: var(--table-rowhead-pad-x, var(--table-pad-x, 4px));
+  padding-right: var(--table-rowhead-pad-x, var(--table-pad-x, 4px));
+}
+
+.card-table--rowhead thead th:first-child {
+  text-align: left;
 }
 
 .card-table td {
   text-align: center;
-  padding: 4px;
+  padding: var(--table-pad-y, 4px) var(--table-pad-x, 4px);
   border-bottom: 1px solid var(--border);
   font-weight: 500;
 }

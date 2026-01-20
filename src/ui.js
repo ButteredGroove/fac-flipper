@@ -203,8 +203,12 @@ function getLayoutMetrics(layout) {
   const rows = layout.card?.grid?.rows || 16;
   const width = Number(layout.card?.size?.width);
   const textScaleValue = Number(layout.card?.text_scale);
+  const paddingXValue = Number(layout.card?.padding_x);
+  const paddingYValue = Number(layout.card?.padding_y);
   const hasWidth = Number.isFinite(width) && width > 0;
   const hasTextScale = Number.isFinite(textScaleValue) && textScaleValue > 0;
+  const hasPaddingX = Number.isFinite(paddingXValue) && paddingXValue >= 0;
+  const hasPaddingY = Number.isFinite(paddingYValue) && paddingYValue >= 0;
   return {
     cols,
     rows,
@@ -212,6 +216,10 @@ function getLayoutMetrics(layout) {
     hasWidth,
     textScale: hasTextScale ? textScaleValue : 1,
     hasTextScale,
+    paddingX: paddingXValue,
+    paddingY: paddingYValue,
+    hasPaddingX,
+    hasPaddingY,
   };
 }
 
@@ -229,6 +237,16 @@ function applyLayoutVars(frameEl, cardEl, metrics) {
     frameEl.style.setProperty("--card-text-scale", metrics.textScale);
   } else {
     frameEl.style.removeProperty("--card-text-scale");
+  }
+  if (metrics.hasPaddingX) {
+    cardEl.style.setProperty("--card-pad-x", `${metrics.paddingX}px`);
+  } else {
+    cardEl.style.removeProperty("--card-pad-x");
+  }
+  if (metrics.hasPaddingY) {
+    cardEl.style.setProperty("--card-pad-y", `${metrics.paddingY}px`);
+  } else {
+    cardEl.style.removeProperty("--card-pad-y");
   }
 }
 
@@ -257,6 +275,9 @@ function renderCardView(frameEl, cardEl, layout, card, placeholderText) {
 
     if (block.styles?.fontSize) {
       blockEl.style.fontSize = `${block.styles.fontSize * metrics.textScale}px`;
+    }
+    if (block.styles?.hideDivider) {
+      blockEl.style.borderBottom = "none";
     }
 
     if (block.title) {
@@ -301,10 +322,43 @@ function renderCardView(frameEl, cardEl, layout, card, placeholderText) {
       wrap.className = "table-wrap";
       const table = document.createElement("table");
       table.className = "card-table";
+      if (block.rowHeader) {
+        table.classList.add("card-table--rowhead");
+      }
+      const tableStyles = block.styles || {};
+      if (Number.isFinite(tableStyles.cellPaddingX)) {
+        table.style.setProperty(
+          "--table-pad-x",
+          `${tableStyles.cellPaddingX}px`,
+        );
+      }
+      if (Number.isFinite(tableStyles.cellPaddingY)) {
+        table.style.setProperty(
+          "--table-pad-y",
+          `${tableStyles.cellPaddingY}px`,
+        );
+      }
+      if (Number.isFinite(tableStyles.rowHeaderPaddingX)) {
+        table.style.setProperty(
+          "--table-rowhead-pad-x",
+          `${tableStyles.rowHeaderPaddingX}px`,
+        );
+      }
+      if (tableStyles.rowHeaderWidth != null) {
+        const widthValue =
+          typeof tableStyles.rowHeaderWidth === "number"
+            ? `${tableStyles.rowHeaderWidth}px`
+            : tableStyles.rowHeaderWidth;
+        table.style.setProperty("--table-rowhead-width", widthValue);
+      }
 
       const head = document.createElement("thead");
       const headRow = document.createElement("tr");
       const emptyHead = document.createElement("th");
+      if (block.rowHeader) {
+        emptyHead.textContent = block.rowHeader;
+        applyValueStyles(block.rowHeader, block.rowHeaderStyles, emptyHead);
+      }
       headRow.appendChild(emptyHead);
 
       for (const column of block.columns || []) {
@@ -312,6 +366,9 @@ function renderCardView(frameEl, cardEl, layout, card, placeholderText) {
         const headerText = column.header || "";
         th.textContent = headerText;
         applyValueStyles(headerText, column.headerStyles, th);
+        if (column.headerStyles?.align) {
+          th.style.textAlign = column.headerStyles.align;
+        }
         headRow.appendChild(th);
       }
 
@@ -330,6 +387,9 @@ function renderCardView(frameEl, cardEl, layout, card, placeholderText) {
           const cellValue = getTableValue(card, column.field_prefix, rowKey);
           td.textContent = cellValue;
           applyValueStyles(cellValue, column.styles, td);
+          if (column.styles?.align) {
+            td.style.textAlign = column.styles.align;
+          }
           tr.appendChild(td);
         }
         body.appendChild(tr);
