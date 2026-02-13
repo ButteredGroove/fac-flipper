@@ -67,6 +67,7 @@ This repository includes ready-to-use decks for:
 
 - **Statis Pro 4th Edition** (v2022)
 - **Statis Pro 2nd & 3rd Editions** (v1987)
+- **Statis Pro Advanced Edition** (v2022)
 
 Each deck is implemented using the same underlying data and layout system, demonstrating how different FAC formats can coexist without changes to application code.
 
@@ -90,17 +91,12 @@ Each deck is implemented using the same underlying data and layout system, demon
 
 ``` bash
 fac-flipper/
-  index.html
-  styles.css
-  app.js
-  src/
-    config.js
-    deck.js
-    state.js
-    ui.js
-    utils.js
   decks/
     index.json
+    SPADV/
+      deck.json
+      cards.csv
+      layout.json
     SP2n3ED/
       deck.json
       cards.csv
@@ -109,7 +105,18 @@ fac-flipper/
       deck.json
       cards.csv
       layout.json
-  README.md
+  src/
+    config.js
+    deck.js
+    state.js
+    ui.js
+    utils.js
+  tests/
+    *.test.js
+  app.js
+  index.html
+  styles.css
+  package.json
 ```
 
 ---
@@ -262,7 +269,7 @@ sure to update to point to your counter.
 
 ## Status
 
-Current version: **v0.0.15**.
+Current version: **v0.0.16**.
 
 This release establishes:
 
