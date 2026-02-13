@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 - Surface deck load failures in `selectDeck` ([#23](https://github.com/ButteredGroove/fac-flipper/issues/23))
 - Guard deck selection against concurrent loads ([#22](https://github.com/ButteredGroove/fac-flipper/issues/22))
 - Social image fails to display ([#32](https://github.com/ButteredGroove/fac-flipper/issues/32))
+- Field value errors in SPADV deck ([#49](https://github.com/ButteredGroove/fac-flipper/issues/49)) and ([#50](https://github.com/ButteredGroove/fac-flipper/issues/50))
 
 ## Maintenance
 
