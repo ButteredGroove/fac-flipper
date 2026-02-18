@@ -8,6 +8,11 @@
   --accent: #3b82f6;
   --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-card: 0 6px 18px rgba(0, 0, 0, 0.08);
+  --flip-anim-ms: 240ms;
+  --flip-anim-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --flip-anim-shadow-frame: 0 10px 24px rgba(0, 0, 0, 0.14);
+  --flip-anim-shadow-card: 0 10px 24px rgba(0, 0, 0, 0.16);
+  --flip-anim-accent: rgba(59, 130, 246, 0.28);
   --radius: 12px;
   --space-1: 8px;
   --space-2: 16px;
@@ -219,6 +224,8 @@ body {
 }
 
 .card {
+  position: relative;
+  overflow: hidden;
   width: 100%;
   height: 100%;
   background: var(--card);
@@ -230,6 +237,111 @@ body {
   grid-template-rows: repeat(var(--card-rows, 16), 1fr);
   padding: var(--card-pad-y, var(--space-1)) var(--card-pad-x, var(--space-1));
   gap: 0;
+}
+
+.card::before,
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.card::before {
+  opacity: 0;
+  z-index: 1;
+  background: rgba(59, 130, 246, 0.14);
+}
+
+.card::after {
+  z-index: 2;
+  opacity: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 12%,
+    rgba(147, 197, 253, 0.38) 40%,
+    rgba(255, 255, 255, 0.62) 54%,
+    rgba(191, 219, 254, 0.3) 68%,
+    rgba(255, 255, 255, 0) 88%
+  );
+}
+
+@keyframes cardFrameFlipPulse {
+  0% {
+    transform: translateY(0) scale(1);
+    box-shadow: var(--shadow-panel);
+  }
+  45% {
+    transform: translateY(-4px) scale(1.012);
+    box-shadow: var(--flip-anim-shadow-frame);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    box-shadow: var(--shadow-panel);
+  }
+}
+
+@keyframes cardSurfaceFlipCue {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    box-shadow: inset 0 0 0 0 rgba(59, 130, 246, 0), var(--shadow-card);
+  }
+  45% {
+    transform: translateY(-2px) scale(1.008);
+    opacity: 0.97;
+    box-shadow: inset 0 0 0 3px var(--flip-anim-accent), var(--flip-anim-shadow-card);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    box-shadow: inset 0 0 0 0 rgba(59, 130, 246, 0), var(--shadow-card);
+  }
+}
+
+@keyframes cardSurfaceTint {
+  0% {
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.26;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes cardSurfaceSheen {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+  35% {
+    opacity: 0.58;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+.card-frame.is-flip-animating {
+  animation: cardFrameFlipPulse var(--flip-anim-ms) var(--flip-anim-ease);
+  will-change: transform, box-shadow;
+}
+
+.card.is-flip-animating {
+  animation: cardSurfaceFlipCue var(--flip-anim-ms) var(--flip-anim-ease);
+  will-change: transform, opacity, box-shadow;
+}
+
+.card.is-flip-animating::before {
+  animation: cardSurfaceTint var(--flip-anim-ms) var(--flip-anim-ease);
+}
+
+.card.is-flip-animating::after {
+  animation: cardSurfaceSheen var(--flip-anim-ms) var(--flip-anim-ease);
 }
 
 .card-placeholder {
@@ -721,6 +833,34 @@ body {
 
 .about-value {
   font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-frame.is-flip-animating,
+  .card.is-flip-animating {
+    animation: none;
+  }
+
+  .card-frame.is-flip-animating {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.22);
+  }
+
+  .card.is-flip-animating {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.22), var(--shadow-card);
+    opacity: 1;
+    transform: none;
+  }
+
+  .card.is-flip-animating::after {
+    animation: none;
+    opacity: 0;
+    transform: translateX(0);
+  }
+
+  .card.is-flip-animating::before {
+    animation: none;
+    opacity: 0.14;
+  }
 }
 
 @media (max-width: 520px) {

@@ -34,6 +34,7 @@ const flushPromises = () =>
 
 vi.mock("../src/ui.js", () => ({
   applyLayoutVars: vi.fn(),
+  animateCurrentCardFlip: vi.fn(),
   closeModal: vi.fn(),
   getLayoutMetrics: vi.fn(() => ({
     cols: 12,
