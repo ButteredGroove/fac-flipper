@@ -97,6 +97,7 @@ async function setupApp() {
 describe("deck parse warnings", () => {
   beforeEach(() => {
     document.body.innerHTML = fixture;
+    window.localStorage.clear();
   });
 
   afterEach(() => {

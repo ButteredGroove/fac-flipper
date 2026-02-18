@@ -102,6 +102,7 @@ async function setupApp() {
 describe("deck load failures", () => {
   beforeEach(() => {
     document.body.innerHTML = fixture;
+    window.localStorage.clear();
   });
 
   afterEach(() => {

@@ -4,6 +4,11 @@ import {
   loadDeckDefinition,
   shuffle,
 } from "./src/deck.js";
+import {
+  clearLastDeckPath,
+  getLastDeckPath,
+  setLastDeckPath,
+} from "./src/preferences.js";
 import { MAX_HISTORY, elements, state } from "./src/state.js";
 import {
   applyLayoutVars,
@@ -207,18 +212,45 @@ async function loadDeckManifest() {
     state.decks = deckEntries;
     renderDeckList(requestDeckChange);
 
-    const firstValidDeck = state.decks.findIndex((deck) => !deck.loadError);
-    if (firstValidDeck >= 0) {
-      await selectDeck(firstValidDeck);
+    const firstValidDeck = findFirstValidDeckIndex();
+    if (firstValidDeck < 0) {
+      clearLastDeckPath();
+      if (state.decks.length > 0) {
+        await selectDeck(0);
+      }
       return;
     }
-    if (state.decks.length > 0) {
-      await selectDeck(0);
+
+    const lastDeckPath = getLastDeckPath();
+    const rememberedDeckIndex = lastDeckPath
+      ? state.decks.findIndex(
+          (deck) => deck.path === lastDeckPath && !deck.loadError,
+        )
+      : -1;
+
+    if (rememberedDeckIndex >= 0) {
+      const restored = await selectDeck(rememberedDeckIndex);
+      if (restored) {
+        return;
+      }
+      const fallbackIndex = findFirstValidDeckIndex(rememberedDeckIndex);
+      if (fallbackIndex >= 0) {
+        await selectDeck(fallbackIndex);
+      }
+      return;
     }
+
+    await selectDeck(firstValidDeck);
   } catch (error) {
     renderDeckWarning([]);
     renderDeckError(error.message);
   }
+}
+
+function findFirstValidDeckIndex(excludeIndex = -1) {
+  return state.decks.findIndex(
+    (deck, index) => index !== excludeIndex && !deck.loadError,
+  );
 }
 
 function getDeckLoadErrorMessage(error, deck) {
@@ -235,10 +267,10 @@ function getDeckLoadErrorMessage(error, deck) {
 async function selectDeck(index) {
   const deck = state.decks[index];
   if (!deck) {
-    return;
+    return false;
   }
   if (state.currentDeckIndex === index && !state.deckLoadError) {
-    return;
+    return true;
   }
 
   state.deckLoadToken += 1;
@@ -262,7 +294,7 @@ async function selectDeck(index) {
   try {
     await ensureDeckLoaded(deck);
     if (state.deckLoadToken !== loadToken) {
-      return;
+      return false;
     }
     const layoutMetrics = getLayoutMetrics(deck.layout);
     applyLayoutVars(elements.cardFrame, elements.card, layoutMetrics);
@@ -273,9 +305,11 @@ async function selectDeck(index) {
     setDrawEnabled(true);
     setDeckControlsEnabled(true);
     state.deckLoadError = null;
+    setLastDeckPath(deck.path);
+    return true;
   } catch (error) {
     if (state.deckLoadToken !== loadToken) {
-      return;
+      return false;
     }
     state.shoe = [];
     updateRemaining();
@@ -285,6 +319,7 @@ async function selectDeck(index) {
     renderDeckWarning([]);
     setDrawEnabled(false);
     setDeckControlsEnabled(false);
+    return false;
   } finally {
     if (state.deckLoadToken === loadToken) {
       state.deckLoading = false;

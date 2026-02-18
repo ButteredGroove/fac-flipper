@@ -128,6 +128,7 @@ describe("deck load guards", () => {
   beforeEach(() => {
     document.body.innerHTML = fixture;
     deckLoads.clear();
+    window.localStorage.clear();
   });
 
   afterEach(() => {

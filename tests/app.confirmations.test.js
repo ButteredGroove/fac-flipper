@@ -95,6 +95,7 @@ async function setupApp() {
 describe("confirmation dialogs", () => {
   beforeEach(() => {
     document.body.innerHTML = fixture;
+    window.localStorage.clear();
   });
 
   afterEach(() => {
