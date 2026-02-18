@@ -94,6 +94,7 @@ async function setupApp() {
 describe("deck manifest validation", () => {
   beforeEach(() => {
     document.body.innerHTML = fixture;
+    window.localStorage.clear();
   });
 
   afterEach(() => {

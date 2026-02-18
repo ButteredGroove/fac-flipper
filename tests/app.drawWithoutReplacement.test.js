@@ -107,6 +107,7 @@ async function setupApp() {
 describe("draw without replacement", () => {
   beforeEach(() => {
     document.body.innerHTML = fixture;
+    window.localStorage.clear();
   });
 
   afterEach(() => {

@@ -46,6 +46,7 @@ Cards are often fundamental to baseball sims, but digital implementations are of
 - Recent draw history
 - Click history entries to preview previous cards
 - Keyboard shortcuts for fast interaction
+- Remembers the last successfully loaded deck on startup
 
 ---
 
@@ -269,7 +270,7 @@ sure to update to point to your counter.
 
 ## Status
 
-Current version: **v0.0.16**.
+Current version: **v0.0.17**.
 
 This release establishes:
 
@@ -277,5 +278,6 @@ This release establishes:
 - deck loading
 - layout-driven rendering
 - draw/shuffle behavior
+- last-used deck persistence
 
 Future versions may improve polish and tooling, but the architectural principles are intended to remain stable.

@@ -106,6 +106,7 @@ async function setupApp() {
 describe("history and preview state", () => {
   beforeEach(() => {
     document.body.innerHTML = fixture;
+    window.localStorage.clear();
   });
 
   afterEach(() => {
