@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Make deck selection keyboard accessible ([#27](https://github.com/ButteredGroove/fac-flipper/issues/27))
 - Add favicon and app icons with manifest wiring ([#39](https://github.com/ButteredGroove/fac-flipper/issues/39))
 - Remember last successfully loaded deck and restore it on startup with safe fallback behavior ([#52](https://github.com/ButteredGroove/fac-flipper/issues/52))
+- Add visual flip feedback on `CURRENT CARD` draws with reduced-motion-safe fallback styling ([#51](https://github.com/ButteredGroove/fac-flipper/issues/51))
 
 ## Changed
 

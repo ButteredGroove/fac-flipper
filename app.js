@@ -11,6 +11,7 @@ import {
 } from "./src/preferences.js";
 import { MAX_HISTORY, elements, state } from "./src/state.js";
 import {
+  animateCurrentCardFlip,
   applyLayoutVars,
   closeModal,
   getLayoutMetrics,
@@ -361,6 +362,7 @@ function drawCard() {
   state.currentCard = card;
   addToHistory(card);
   renderCard();
+  animateCurrentCardFlip();
   updateRemaining();
 }
 

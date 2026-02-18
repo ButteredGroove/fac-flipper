@@ -8,9 +8,73 @@ import {
 import { elements, state } from "./state.js";
 import { formatVersion, getValue } from "./utils.js";
 
+const FLIP_ANIMATION_CLASS = "is-flip-animating";
+const FLIP_ANIMATION_DURATION_MS = 240;
+const flipAnimationState = new WeakMap();
+
 function updateDeckDisplay(deck) {
   elements.deckName.textContent = deck.name;
   elements.deckVersion.textContent = formatVersion(deck.version);
+}
+
+function clearFlipAnimationState(element) {
+  const existing = flipAnimationState.get(element);
+  if (!existing) {
+    return;
+  }
+  window.clearTimeout(existing.timeoutId);
+  element.removeEventListener("animationend", existing.onEnd);
+  flipAnimationState.delete(element);
+}
+
+function restartElementAnimation(element, className, durationMs) {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
+
+  clearFlipAnimationState(element);
+  element.classList.remove(className);
+  void element.offsetWidth;
+  element.classList.add(className);
+
+  const cleanup = () => {
+    const current = flipAnimationState.get(element);
+    if (!current || current.onEnd !== onEnd) {
+      return;
+    }
+    clearFlipAnimationState(element);
+    element.classList.remove(className);
+  };
+
+  const onEnd = (event) => {
+    if (event.target !== element) {
+      return;
+    }
+    cleanup();
+  };
+
+  const timeoutId = window.setTimeout(cleanup, durationMs + 80);
+  flipAnimationState.set(element, { onEnd, timeoutId });
+  element.addEventListener("animationend", onEnd);
+}
+
+function animateCurrentCardFlip() {
+  const frameEl = elements.cardFrame;
+  const cardEl = elements.card;
+  if (!(frameEl instanceof HTMLElement) || !(cardEl instanceof HTMLElement)) {
+    return;
+  }
+
+  restartElementAnimation(
+    frameEl,
+    FLIP_ANIMATION_CLASS,
+    FLIP_ANIMATION_DURATION_MS,
+  );
+  restartElementAnimation(
+    cardEl,
+    FLIP_ANIMATION_CLASS,
+    FLIP_ANIMATION_DURATION_MS,
+  );
 }
 
 function renderDeckWarning(warnings) {
@@ -556,6 +620,7 @@ function setDrawEnabled(enabled) {
 
 export {
   applyLayoutVars,
+  animateCurrentCardFlip,
   closeModal,
   getLayoutMetrics,
   highlightDeck,
