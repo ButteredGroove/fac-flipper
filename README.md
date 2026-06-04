@@ -107,6 +107,10 @@ fac-flipper/
       deck.json
       cards.csv
       layout.json
+    SP4ED_NO_STEAL/
+      deck.json
+      cards.csv
+      layout.json
   src/
     config.js
     deck.js
