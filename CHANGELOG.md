@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## Added
 
+- Add 4th edition FAC deck without MUST STEAL cards ([#58](https://github.com/ButteredGroove/fac-flipper/issues/58))
 - Add 2nd/3rd edition FAC deck ([#3](https://github.com/ButteredGroove/fac-flipper/issues/3))
 - Add Vitest and Initial Unit Tests for Data Parsing ([#6](https://github.com/ButteredGroove/fac-flipper/issues/6))
 - Add analytics tracking ([#10](https://github.com/ButteredGroove/fac-flipper/issues/10))

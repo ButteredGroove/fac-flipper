@@ -1,5 +1,6 @@
 {
   "decks": [
+    "decks/SP4ED_NO_STEAL/deck.json",
     "decks/SP4ED/deck.json",
     "decks/SP2n3ED/deck.json",
     "decks/SPADV/deck.json"
