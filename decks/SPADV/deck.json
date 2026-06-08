@@ -1,7 +1,7 @@
 {
   "name": "Statis Pro Advanced",
-  "version": "2022",
-  "source": "New FAC.xlsx",
+  "version": "2026 V1",
+  "source": "Revised FAC 2026.pdf",
   "data_csv": "cards.csv",
   "layout_json": "layout.json"
 }

@@ -120,4 +120,50 @@ describe("ensureDeckLoaded", () => {
 
     expect(fetchMock).not.toHaveBeenCalled();
   });
+
+  it("throws a clear error when the CSV does not match the layout fields", async () => {
+    const csvText = "001,Alpha\n002,Beta";
+    const layout = {
+      blocks: [
+        {
+          type: "kv",
+          items: [{ field: "card_id" }, { field: "name" }],
+        },
+      ],
+    };
+    const fetchMock = vi.fn((url) => {
+      const target = String(url);
+      if (target.includes("data.csv")) {
+        return Promise.resolve({
+          ok: true,
+          text: async () => csvText,
+        });
+      }
+      if (target.includes("layout.json")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => layout,
+        });
+      }
+      return Promise.resolve({
+        ok: false,
+        text: async () => "",
+        json: async () => ({}),
+      });
+    });
+
+    globalThis.fetch = fetchMock;
+
+    const deck = {
+      dataCsv: "https://example.com/data.csv",
+      layoutJson: "https://example.com/layout.json",
+      cards: null,
+      layout: null,
+      parseWarnings: [],
+    };
+
+    await expect(ensureDeckLoaded(deck)).rejects.toThrow(
+      "Deck CSV at https://example.com/data.csv is missing fields required by the layout: card_id, name. The CSV may be missing its header row.",
+    );
+  });
 });
