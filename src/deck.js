@@ -48,9 +48,129 @@ async function ensureDeckLoaded(deck) {
   ]);
 
   const { cards, warnings } = parseCards(csvText);
+  validateLayoutFields(cards, layout, deck.dataCsv);
   deck.cards = cards;
   deck.parseWarnings = warnings;
   deck.layout = layout;
+}
+
+function validateLayoutFields(cards, layout, csvPath) {
+  if (!Array.isArray(cards) || cards.length === 0) {
+    return;
+  }
+
+  const firstCard = cards[0] || {};
+  const availableFields = new Set(
+    Object.keys(firstCard).filter((field) => field !== "__id"),
+  );
+  const missingFields = getMissingLayoutFields(layout, availableFields);
+  if (missingFields.length === 0) {
+    return;
+  }
+
+  const requiredFields = getRequiredLayoutFields(layout);
+  const missingAllRequiredFields =
+    requiredFields.length > 0 &&
+    requiredFields.every((field) => !availableFields.has(field));
+  const headerHint = missingAllRequiredFields
+    ? " The CSV may be missing its header row."
+    : "";
+
+  throw new Error(
+    `Deck CSV at ${csvPath} is missing fields required by the layout: ${missingFields.join(
+      ", ",
+    )}.${headerHint}`,
+  );
+}
+
+function getMissingLayoutFields(layout, availableFields) {
+  const missing = [];
+  const seen = new Set();
+  const blocks = Array.isArray(layout?.blocks) ? layout.blocks : [];
+
+  for (const block of blocks) {
+    if (block?.type === "kv") {
+      for (const item of block.items || []) {
+        const field = typeof item?.field === "string" ? item.field : "";
+        if (!field || availableFields.has(field) || seen.has(field)) {
+          continue;
+        }
+        seen.add(field);
+        missing.push(field);
+      }
+      continue;
+    }
+
+    if (block?.type !== "table") {
+      continue;
+    }
+
+    const rows = Array.isArray(block.rows) ? block.rows : [];
+    for (const column of block.columns || []) {
+      const prefix =
+        typeof column?.field_prefix === "string" ? column.field_prefix : "";
+      if (!prefix) {
+        continue;
+      }
+
+      const allField = `${prefix}all`;
+      const hasAllField = availableFields.has(allField);
+      for (const rowKey of rows) {
+        const field = `${prefix}${rowKey}`;
+        if (hasAllField || availableFields.has(field) || seen.has(field)) {
+          continue;
+        }
+        seen.add(field);
+        missing.push(field);
+      }
+    }
+  }
+
+  return missing;
+}
+
+function getRequiredLayoutFields(layout) {
+  const required = [];
+  const seen = new Set();
+  const blocks = Array.isArray(layout?.blocks) ? layout.blocks : [];
+
+  for (const block of blocks) {
+    if (block?.type === "kv") {
+      for (const item of block.items || []) {
+        const field = typeof item?.field === "string" ? item.field : "";
+        if (!field || seen.has(field)) {
+          continue;
+        }
+        seen.add(field);
+        required.push(field);
+      }
+      continue;
+    }
+
+    if (block?.type !== "table") {
+      continue;
+    }
+
+    const rows = Array.isArray(block.rows) ? block.rows : [];
+    for (const column of block.columns || []) {
+      const prefix =
+        typeof column?.field_prefix === "string" ? column.field_prefix : "";
+      if (!prefix) {
+        continue;
+      }
+
+      for (const rowKey of rows) {
+        const field = `${prefix}${rowKey}`;
+        if (seen.has(field)) {
+          continue;
+        }
+        seen.add(field);
+        required.push(field);
+      }
+    }
+  }
+
+  return required;
 }
 
 function parseCards(csvText) {

@@ -69,7 +69,7 @@ This repository includes ready-to-use decks for:
 
 - **Statis Pro 4th Edition** (v2022)
 - **Statis Pro 2nd & 3rd Editions** (v1987)
-- **Statis Pro Advanced Edition** (v2022)
+- **Statis Pro Advanced Edition** (v2026)
 
 Each deck is implemented using the same underlying data and layout system, demonstrating how different FAC formats can coexist without changes to application code.
 
