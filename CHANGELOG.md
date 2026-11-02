@@ -36,6 +36,7 @@ All notable changes to this project will be documented in this file.
 
 ## Maintenance
 
+- Update GitHub Actions and CI to Node.js 24 ([#66](https://github.com/ButteredGroove/fac-flipper/issues/66))
 - Simplify application state and UI code without changing behavior ([#64](https://github.com/ButteredGroove/fac-flipper/issues/64))
 - Configure and Run Biome for Code Formatting and Linting ([#1](https://github.com/ButteredGroove/fac-flipper/issues/1))
 - Normalize LF for line ending ([#19](https://github.com/ButteredGroove/fac-flipper/issues/19))

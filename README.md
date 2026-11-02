@@ -129,6 +129,8 @@ fac-flipper/
 
 ## Development
 
+Use Node.js 24, as specified in `.nvmrc`, and install the locked dependencies with `npm ci`.
+
 Tests use Vitest with a jsdom environment.
 
 Run the test suite:
