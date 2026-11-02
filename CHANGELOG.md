@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 
 ## Fixed
 
+- Keep the replacement switch consistent with drawing mode after a reload ([#82](https://github.com/ButteredGroove/fac-flipper/issues/82))
 - Reject empty or malformed deck CSV files with clear errors ([#70](https://github.com/ButteredGroove/fac-flipper/issues/70))
 - Try other decks when a startup deck fails to load ([#69](https://github.com/ButteredGroove/fac-flipper/issues/69))
 - Keep keyboard focus in dialogs and restore it after closing ([#68](https://github.com/ButteredGroove/fac-flipper/issues/68))

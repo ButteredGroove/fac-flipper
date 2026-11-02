@@ -51,6 +51,45 @@ test("draws without replacement and reshuffles without clearing history", async 
   await expect(page.locator(".history-item")).toHaveCount(1);
 });
 
+test("keeps the replacement switch in sync after reload and page restoration", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.locator("#drawButton")).toBeEnabled();
+  const toggle = page.locator("#replacementToggleSide");
+  const remaining = page.locator("#remainingText");
+  await page.locator(".switch .slider").click();
+  await page.locator("#drawButton").click();
+  await expect(toggle).toBeChecked();
+  await expect(remaining).toBeVisible();
+
+  await page.reload();
+  await expect(page.locator("#drawButton")).toBeEnabled();
+  await expect(toggle).not.toBeChecked();
+  await expect(remaining).toBeHidden();
+  await page.evaluate(() => {
+    document.querySelector("#replacementToggleSide").checked = true;
+    window.dispatchEvent(new PageTransitionEvent("pageshow"));
+  });
+  await expect(toggle).not.toBeChecked();
+
+  await page.locator(".switch .slider").click();
+  const fullCount = Number((await remaining.textContent()).match(/\d+/)[0]);
+  await page.locator("#drawButton").click();
+  const drawnCount = Number((await remaining.textContent()).match(/\d+/)[0]);
+  expect(drawnCount).toBe(fullCount - 1);
+  await page.evaluate(() => {
+    document.querySelector("#replacementToggleSide").checked = false;
+    window.dispatchEvent(
+      new PageTransitionEvent("pageshow", { persisted: true }),
+    );
+  });
+  await expect(toggle).toBeChecked();
+  await expect(remaining).toHaveText(`(${drawnCount} remaining)`);
+  await page.locator("#drawButton").click();
+  await expect(remaining).toHaveText(`(${drawnCount - 1} remaining)`);
+});
+
 test("keeps dialog focus contained and restores it after Escape", async ({
   page,
 }) => {

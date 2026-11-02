@@ -37,10 +37,12 @@ init();
 
 function init() {
   wireEvents();
+  syncReplacementControl();
   loadDeckManifest();
 }
 
 function wireEvents() {
+  window.addEventListener("pageshow", syncReplacementControl);
   elements.drawButton.addEventListener("click", drawCard);
   elements.cardFrame.addEventListener("click", drawCard);
   elements.cardFrame.addEventListener("keydown", (event) => {
@@ -89,6 +91,11 @@ function wireEvents() {
       handleModalOverlayClick();
     }
   });
+}
+
+function syncReplacementControl() {
+  elements.replacementToggleSide.checked = state.withoutReplacement;
+  updateRemaining();
 }
 
 function handleModalKeydown(event) {
