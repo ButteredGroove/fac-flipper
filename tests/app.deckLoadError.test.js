@@ -111,7 +111,7 @@ describe("deck load failures", () => {
     vi.clearAllMocks();
   });
 
-  it("shows a clear error and keeps controls disabled", async () => {
+  it("reports a failed deck and automatically loads the next valid deck", async () => {
     const { ui, state } = await setupApp();
 
     expect(ui.renderDeckLoadError).toHaveBeenCalledWith(
@@ -120,15 +120,19 @@ describe("deck load failures", () => {
     expect(ui.setDeckControlsEnabled).toHaveBeenCalledWith(false);
     expect(ui.setDrawEnabled).toHaveBeenCalledWith(false);
     expect(ui.setDeckSelectionEnabled).toHaveBeenLastCalledWith(true);
-    expect(state.deckLoadError).toContain("Unable to load deck");
+    expect(state.currentDeckIndex).toBe(1);
+    expect(state.deckLoadError).toBeNull();
+    expect(ui.setDrawEnabled).toHaveBeenLastCalledWith(true);
   });
 
   it("recovers when a valid deck is selected", async () => {
     const { ui, state } = await setupApp();
     const onSelectDeck = ui.renderDeckList.mock.calls[0][0];
 
-    ui.setDrawEnabled.mockClear();
-    ui.setDeckControlsEnabled.mockClear();
+    onSelectDeck(0);
+    await flushPromises();
+    await flushPromises();
+    expect(state.deckLoadError).toContain("Unable to load deck");
 
     onSelectDeck(1);
     await flushPromises();

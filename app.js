@@ -257,8 +257,10 @@ async function loadDeckManifest() {
     state.decks = deckEntries;
     renderDeckList(requestDeckChange);
 
-    const firstValidDeck = findFirstValidDeckIndex();
-    if (firstValidDeck < 0) {
+    const candidates = state.decks
+      .map((deck, index) => (deck.loadError ? -1 : index))
+      .filter((index) => index >= 0);
+    if (candidates.length === 0) {
       clearLastDeckPath();
       if (state.decks.length > 0) {
         await selectDeck(0);
@@ -274,28 +276,22 @@ async function loadDeckManifest() {
       : -1;
 
     if (rememberedDeckIndex >= 0) {
-      const restored = await selectDeck(rememberedDeckIndex);
-      if (restored) {
-        return;
-      }
-      const fallbackIndex = findFirstValidDeckIndex(rememberedDeckIndex);
-      if (fallbackIndex >= 0) {
-        await selectDeck(fallbackIndex);
-      }
-      return;
+      candidates.splice(candidates.indexOf(rememberedDeckIndex), 1);
+      candidates.unshift(rememberedDeckIndex);
     }
 
-    await selectDeck(firstValidDeck);
+    for (const index of candidates) {
+      const pendingLoad = selectDeck(index);
+      const loadToken = state.deckLoadToken;
+      const loaded = await pendingLoad;
+      if (loaded || state.deckLoadToken !== loadToken) {
+        return;
+      }
+    }
   } catch (error) {
     renderDeckWarning([]);
     renderDeckError(error.message);
   }
-}
-
-function findFirstValidDeckIndex(excludeIndex = -1) {
-  return state.decks.findIndex(
-    (deck, index) => index !== excludeIndex && !deck.loadError,
-  );
 }
 
 function getDeckLoadErrorMessage(error, deck) {

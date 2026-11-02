@@ -200,6 +200,54 @@ describe("last deck preference", () => {
     expect(ensureDeckLoaded).toHaveBeenCalledTimes(2);
   });
 
+  it("tries later decks when the first deck fails to load", async () => {
+    manifestDecks = ["decks/one/deck.json", "decks/two/deck.json"];
+    runtimeLoadErrors.add("decks/one/deck.json");
+
+    const { state } = await setupApp();
+
+    expect(state.currentDeckIndex).toBe(1);
+    expect(state.deckLoadError).toBeNull();
+    expect(window.localStorage.getItem(LAST_DECK_PATH_KEY)).toBe(
+      "decks/two/deck.json",
+    );
+  });
+
+  it("tries all candidates after a remembered deck fails", async () => {
+    manifestDecks = [
+      "decks/one/deck.json",
+      "decks/two/deck.json",
+      "decks/three/deck.json",
+    ];
+    runtimeLoadErrors = new Set(["decks/one/deck.json", "decks/two/deck.json"]);
+    window.localStorage.setItem(LAST_DECK_PATH_KEY, "decks/two/deck.json");
+
+    const { state } = await setupApp();
+
+    expect(state.currentDeckIndex).toBe(2);
+    expect(state.deckLoadError).toBeNull();
+    expect(ensureDeckLoaded.mock.calls.map(([deck]) => deck.path)).toEqual([
+      "decks/two/deck.json",
+      "decks/one/deck.json",
+      "decks/three/deck.json",
+    ]);
+  });
+
+  it("shows an error when every candidate fails without forgetting the saved deck", async () => {
+    manifestDecks = ["decks/one/deck.json", "decks/two/deck.json"];
+    runtimeLoadErrors = new Set(manifestDecks);
+    window.localStorage.setItem(LAST_DECK_PATH_KEY, "decks/two/deck.json");
+
+    const { state, ui } = await setupApp();
+
+    expect(ensureDeckLoaded).toHaveBeenCalledTimes(2);
+    expect(state.deckLoadError).toContain("Unable to load deck");
+    expect(ui.setDrawEnabled).toHaveBeenLastCalledWith(false);
+    expect(window.localStorage.getItem(LAST_DECK_PATH_KEY)).toBe(
+      "decks/two/deck.json",
+    );
+  });
+
   it("updates saved deck when a manual deck switch succeeds", async () => {
     manifestDecks = ["decks/one/deck.json", "decks/two/deck.json"];
 
