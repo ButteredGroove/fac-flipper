@@ -145,6 +145,13 @@ Run lint checks:
 npm run lint
 ```
 
+Run the browser smoke tests (install Chromium once first):
+
+```bash
+npx playwright install chromium
+npm run test:browser
+```
+
 ---
 
 ## Creating your own deck
