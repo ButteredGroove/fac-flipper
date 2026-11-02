@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 
 ## Fixed
 
+- Reject empty or malformed deck CSV files with clear errors ([#70](https://github.com/ButteredGroove/fac-flipper/issues/70))
 - Try other decks when a startup deck fails to load ([#69](https://github.com/ButteredGroove/fac-flipper/issues/69))
 - Keep keyboard focus in dialogs and restore it after closing ([#68](https://github.com/ButteredGroove/fac-flipper/issues/68))
 - Harden formatVersion for numeric deck versions ([#44](https://github.com/ButteredGroove/fac-flipper/issues/44))
