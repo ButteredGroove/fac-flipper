@@ -39,6 +39,7 @@ All notable changes to this project will be documented in this file.
 
 ## Maintenance
 
+- Document local setup, serving, and validation ([#73](https://github.com/ButteredGroove/fac-flipper/issues/73))
 - Add browser smoke tests and shipped-deck integrity checks ([#72](https://github.com/ButteredGroove/fac-flipper/issues/72))
 - Require successful lint and tests before deploying to GitHub Pages ([#71](https://github.com/ButteredGroove/fac-flipper/issues/71))
 - Update vulnerable development dependencies ([#67](https://github.com/ButteredGroove/fac-flipper/issues/67))

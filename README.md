@@ -129,20 +129,25 @@ fac-flipper/
 
 ## Development
 
-Use Node.js 24, as specified in `.nvmrc`, and install the locked dependencies with `npm ci`.
-
-Tests use Vitest with a jsdom environment.
-
-Run the test suite:
+Use Node.js 24, as specified in `.nvmrc`. From the repository root, install the locked dependencies:
 
 ```bash
-npm test
+npm ci
 ```
 
-Run lint checks:
+Serve the app locally:
+
+```bash
+node scripts/test-server.cjs
+```
+
+Open <http://127.0.0.1:4174/> in a browser. Keep the server running while using the app and press Ctrl+C in its terminal to stop it. Opening `index.html` directly does not provide the HTTP server needed to load decks and modules.
+
+Run the lint and Vitest checks:
 
 ```bash
 npm run lint
+npm test
 ```
 
 Run the browser smoke tests (install Chromium once first):
@@ -151,6 +156,8 @@ Run the browser smoke tests (install Chromium once first):
 npx playwright install chromium
 npm run test:browser
 ```
+
+The browser tests start their own server on port 4174. Stop the manual server first, or the browser test server cannot start. CI runs lint, Vitest, and browser tests; Pages deployment runs the same checks before publishing.
 
 ---
 
