@@ -11,6 +11,9 @@ import { formatVersion, getValue } from "./utils.js";
 const FLIP_ANIMATION_CLASS = "is-flip-animating";
 const FLIP_ANIMATION_DURATION_MS = 240;
 const flipAnimationState = new WeakMap();
+let modalPreviousFocus = null;
+let modalBackground = null;
+let modalBackgroundWasInert = false;
 
 function updateDeckDisplay(deck) {
   elements.deckName.textContent = deck.name;
@@ -591,6 +594,12 @@ function openModal(messageOrOptions = {}) {
     elements.modalBody.textContent = body;
   }
 
+  modalPreviousFocus = document.activeElement;
+  modalBackground = document.querySelector(".app");
+  modalBackgroundWasInert = modalBackground?.inert ?? false;
+  if (modalBackground) {
+    modalBackground.inert = true;
+  }
   elements.modal.classList.toggle("is-about", variant === "about");
   elements.modalOverlay.hidden = false;
   state.modalOpen = true;
@@ -608,6 +617,17 @@ function closeModal() {
   state.modalOnConfirm = null;
   state.modalOnCancel = null;
   state.modalCloseOnOverlay = true;
+  if (modalBackground) {
+    modalBackground.inert = modalBackgroundWasInert;
+  }
+  if (
+    modalPreviousFocus instanceof HTMLElement &&
+    modalPreviousFocus.isConnected
+  ) {
+    modalPreviousFocus.focus();
+  }
+  modalPreviousFocus = null;
+  modalBackground = null;
 }
 
 function setDrawEnabled(enabled) {
