@@ -4,7 +4,6 @@ const elements = {
   deckList: document.getElementById("deckList"),
   deckName: document.getElementById("deckName"),
   deckVersion: document.getElementById("deckVersion"),
-  deckDisplay: document.getElementById("deckDisplay"),
   deckWarning: document.getElementById("deckWarning"),
   cardFrame: document.getElementById("cardFrame"),
   card: document.getElementById("card"),

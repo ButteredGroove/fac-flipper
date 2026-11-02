@@ -155,9 +155,7 @@ function requestDeckChange(index) {
     body: `Switch to ${deckName}? This will clear the current card and history.`,
     confirmLabel: "Change deck",
     cancelLabel: "Cancel",
-    onConfirm: () => {
-      void selectDeck(index);
-    },
+    onConfirm: () => void selectDeck(index),
   });
 }
 
@@ -286,7 +284,6 @@ async function selectDeck(index) {
   state.currentDeckIndex = index;
   state.currentCard = null;
   state.history = [];
-  state.previewCard = null;
   updateDeckDisplay(deck);
   highlightDeck(index);
   clearPreview();
@@ -373,13 +370,10 @@ function reshuffleDeck(clearHistory) {
   if (clearHistory) {
     state.history = [];
     state.currentCard = null;
-    state.previewCard = null;
-    renderHistory(setPreviewCard);
-    renderPreviewCard();
+    clearPreview();
     renderCard();
   }
   resetShoe();
-  updateRemaining();
 }
 
 function resetShoe() {
@@ -426,7 +420,6 @@ function setReplacementMode(withoutReplacement) {
   state.withoutReplacement = withoutReplacement;
   elements.replacementToggleSide.checked = withoutReplacement;
   resetShoe();
-  updateRemaining();
 }
 
 function addToHistory(card) {
