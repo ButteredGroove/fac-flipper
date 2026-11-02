@@ -198,7 +198,9 @@ This file ties everything together.
 
 - One row per card
 - Columns represent semantic fields
-- Blank values are allowed
+- At least one card is required; each row must have the same number of fields as the header
+- Blank values are allowed, but must be represented by empty fields (for example, `001,,Yes`)
+- Header names must be unique after surrounding whitespace is trimmed
 - Field names are free-form, but must match those referenced by the layout
 
 Example (simplified):
@@ -277,7 +279,7 @@ sure to update to point to your counter.
 
 ## Status
 
-Current version: **v0.0.21**.
+Current version: **v0.0.22**.
 
 This release establishes:
 

@@ -47,7 +47,7 @@ async function ensureDeckLoaded(deck) {
     fetchJson(deck.layoutJson),
   ]);
 
-  const { cards, warnings } = parseCards(csvText);
+  const { cards, warnings } = parseCards(csvText, deck.dataCsv);
   validateLayoutFields(cards, layout, deck.dataCsv);
   deck.cards = cards;
   deck.parseWarnings = warnings;
@@ -173,7 +173,7 @@ function getRequiredLayoutFields(layout) {
   return required;
 }
 
-function parseCards(csvText) {
+function parseCards(csvText, csvPath = "") {
   const parser = window.Papa;
   if (!parser) {
     throw new Error("PapaParse is not available.");
@@ -184,14 +184,29 @@ function parseCards(csvText) {
     console.warn("CSV parse errors:", warnings);
   }
   const rows = Array.isArray(result.data) ? result.data : [];
-  if (rows.length === 0) {
-    return { cards: [], warnings };
+  const label = csvPath ? `Deck CSV at ${csvPath}` : "Deck CSV";
+  if (rows.length < 2) {
+    throw new Error(`${label} has no cards.`);
   }
   const headers = rows[0].map((header) => String(header ?? "").trim());
+  const seenHeaders = new Set();
+  for (const header of headers) {
+    if (seenHeaders.has(header)) {
+      throw new Error(
+        `${label} has a duplicate header: ${header || "(blank)"}.`,
+      );
+    }
+    seenHeaders.add(header);
+  }
   const cards = rows
     .slice(1)
     .filter((row) => row.some((cell) => String(cell ?? "").trim() !== ""))
     .map((row, index) => {
+      if (row.length !== headers.length) {
+        throw new Error(
+          `${label} has ${row.length} fields in card record ${index + 1}; expected ${headers.length}.`,
+        );
+      }
       const card = {};
       headers.forEach((header, i) => {
         card[header] = row[i] ?? "";
@@ -200,6 +215,9 @@ function parseCards(csvText) {
       card.__id = id || String(index + 1).padStart(3, "0");
       return card;
     });
+  if (cards.length === 0) {
+    throw new Error(`${label} has no cards.`);
+  }
   return { cards, warnings };
 }
 

@@ -49,8 +49,8 @@ describe("parseCards", () => {
     expect(cards[1].__id).toBe("002");
   });
 
-  it("trims headers and fills missing cells with empty strings", () => {
-    const csv = " card_id , ,name\n001,,Alpha\n002";
+  it("trims headers and preserves explicitly blank cells", () => {
+    const csv = " card_id , ,name\n001,,Alpha\n002,,";
     const { cards } = parseCards(csv);
 
     expect(cards).toHaveLength(2);
@@ -60,6 +60,30 @@ describe("parseCards", () => {
     expect(cards[1].card_id).toBe("002");
     expect(cards[1][""]).toBe("");
     expect(cards[1].name).toBe("");
+  });
+
+  it.each(["", "card_id,name", "card_id,name\n,\n  ,  "])(
+    "rejects a CSV without cards",
+    (csv) => {
+      expect(() => parseCards(csv, "decks/example/cards.csv")).toThrow(
+        "Deck CSV at decks/example/cards.csv has no cards.",
+      );
+    },
+  );
+
+  it("rejects duplicate headers after trimming", () => {
+    expect(() => parseCards("card_id,name, name \n001,A,B")).toThrow(
+      "duplicate header: name",
+    );
+  });
+
+  it.each([
+    ["card_id,name\n001", 1],
+    ["card_id,name\n001,Alpha,extra", 3],
+  ])("rejects records with an unexpected number of fields", (csv, count) => {
+    expect(() => parseCards(csv)).toThrow(
+      `has ${count} fields in card record 1; expected 2`,
+    );
   });
 
   it("throws when PapaParse is unavailable", () => {
