@@ -1,10 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import {
-  LAST_DECK_PATH_KEY,
   clearLastDeckPath,
   getLastDeckPath,
   setLastDeckPath,
 } from "../src/preferences.js";
+
+const LAST_DECK_PATH_KEY = "fac-flipper:lastDeckPath";
 
 describe("preferences storage helpers", () => {
   it("returns null when storage read fails", () => {
@@ -45,6 +46,10 @@ describe("preferences storage helpers", () => {
   });
 
   it("uses the expected storage key", () => {
-    expect(LAST_DECK_PATH_KEY).toBe("fac-flipper:lastDeckPath");
+    const path = "decks/SPADV/deck.json";
+    setLastDeckPath(path);
+    expect(window.localStorage.getItem(LAST_DECK_PATH_KEY)).toBe(path);
+    clearLastDeckPath();
+    expect(window.localStorage.getItem(LAST_DECK_PATH_KEY)).toBeNull();
   });
 });

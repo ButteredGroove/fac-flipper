@@ -28,9 +28,4 @@ function clearLastDeckPath() {
   }
 }
 
-export {
-  LAST_DECK_PATH_KEY,
-  getLastDeckPath,
-  setLastDeckPath,
-  clearLastDeckPath,
-};
+export { getLastDeckPath, setLastDeckPath, clearLastDeckPath };

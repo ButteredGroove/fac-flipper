@@ -119,11 +119,9 @@ function renderDeckList(onSelectDeck) {
       version.textContent = formatVersion(deck.version);
       item.appendChild(version);
     }
-    if (onSelectDeck) {
-      item.addEventListener("click", () => {
-        onSelectDeck(index);
-      });
-    }
+    item.addEventListener("click", () => {
+      onSelectDeck(index);
+    });
     listItem.appendChild(item);
     elements.deckList.appendChild(listItem);
   });
@@ -212,7 +210,7 @@ function renderHistory(onSelectPreview) {
     row.className = `history-item${isActive ? " is-active" : ""}`;
     const disabled = Boolean(state.deckLoading || state.deckLoadError);
     row.disabled = disabled;
-    if (onSelectPreview && !disabled) {
+    if (!disabled) {
       row.addEventListener("click", () => {
         onSelectPreview(entry.card);
       });
@@ -560,10 +558,11 @@ function openAboutModal() {
   });
 }
 
-function openModal(messageOrOptions, overrides = {}) {
-  const input = messageOrOptions ?? {};
+function openModal(messageOrOptions = {}) {
   const options =
-    typeof input === "string" ? { body: input, ...overrides } : { ...input };
+    typeof messageOrOptions === "string"
+      ? { body: messageOrOptions }
+      : { ...messageOrOptions };
   const {
     title = "Notice",
     body = "",
@@ -574,7 +573,7 @@ function openModal(messageOrOptions, overrides = {}) {
     onConfirm = null,
     onCancel = null,
     closeOnOverlay = true,
-  } = options || {};
+  } = options;
 
   elements.modalTitle.textContent = title;
   elements.modalOk.textContent = confirmLabel;
