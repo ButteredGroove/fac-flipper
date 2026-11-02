@@ -59,6 +59,7 @@ Cards are often fundamental to baseball sims, but digital implementations are of
 - Click a different deck (or focus it and press Enter/Space) to switch (confirmation required).
 - Clicking the active deck does nothing.
 - Click a history entry to preview it alongside the current card.
+- Reloading starts a fresh session with replacement; turn on Without replacement to use a fresh shuffled deck.
 - Click About for version, author, and support link.
 
 ---
@@ -293,7 +294,7 @@ sure to update to point to your counter.
 
 ## Status
 
-Current version: **v0.0.22**.
+Current version: **v0.0.23**.
 
 This release establishes:
 
