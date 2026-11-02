@@ -9,6 +9,7 @@ import {
 import { formatVersion } from "../src/utils.js";
 
 const fixture = `
+  <div class="app"><button id="opener" type="button">Open</button></div>
   <div id="modalOverlay" class="modal-overlay" hidden>
     <div id="modal" class="modal">
       <div id="modalTitle" class="modal-title"></div>
@@ -99,6 +100,21 @@ describe("modal UI", () => {
     const cancelButton = document.getElementById("modalCancel");
     expect(cancelButton.hidden).toBe(false);
     expect(cancelButton.textContent).toBe("Back");
+  });
+
+  it("makes the app inert and restores focus and background state on close", async () => {
+    const { openModal, closeModal } = await setupUi();
+    const opener = document.getElementById("opener");
+    const app = document.querySelector(".app");
+    opener.focus();
+
+    openModal({ body: "Confirm?", cancelLabel: "Cancel" });
+
+    expect(app.inert).toBe(true);
+    expect(document.activeElement).toBe(document.getElementById("modalCancel"));
+    closeModal();
+    expect(app.inert).toBe(false);
+    expect(document.activeElement).toBe(opener);
   });
 
   it("renders About modal content", async () => {
