@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ## Changed
 
+- Make the draw animation more visible within a tightly cropped card ([#84](https://github.com/ButteredGroove/fac-flipper/issues/84))
 - Modify size of card ([#2](https://github.com/ButteredGroove/fac-flipper/issues/2))
 - Replace Custom CSV Parser with PapaParse ([#4](https://github.com/ButteredGroove/fac-flipper/issues/4))
 - Decompose app.js into ES Modules ([#5](https://github.com/ButteredGroove/fac-flipper/issues/5))

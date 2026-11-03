@@ -77,11 +77,25 @@ describe("animateCurrentCardFlip", () => {
     );
     expect(elements.card.classList.contains("is-flip-animating")).toBe(true);
 
-    vi.advanceTimersByTime(400);
+    vi.advanceTimersByTime(800);
 
     expect(elements.cardFrame.classList.contains("is-flip-animating")).toBe(
       false,
     );
+    expect(elements.card.classList.contains("is-flip-animating")).toBe(false);
+  });
+
+  it("does not end the card animation for a pseudo-element event", async () => {
+    document.body.innerHTML = fixture;
+    const { ui, elements } = await loadUi();
+
+    ui.animateCurrentCardFlip();
+    const pseudoEnd = new Event("animationend");
+    Object.defineProperty(pseudoEnd, "pseudoElement", { value: "::before" });
+    elements.card.dispatchEvent(pseudoEnd);
+
+    expect(elements.card.classList.contains("is-flip-animating")).toBe(true);
+    elements.card.dispatchEvent(new Event("animationend"));
     expect(elements.card.classList.contains("is-flip-animating")).toBe(false);
   });
 
@@ -96,7 +110,7 @@ describe("animateCurrentCardFlip", () => {
     );
     expect(elements.card.classList.contains("is-flip-animating")).toBe(true);
 
-    vi.advanceTimersByTime(400);
+    vi.advanceTimersByTime(800);
 
     expect(elements.cardFrame.classList.contains("is-flip-animating")).toBe(
       false,

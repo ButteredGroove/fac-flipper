@@ -9,7 +9,7 @@ import { elements, state } from "./state.js";
 import { formatVersion, getValue } from "./utils.js";
 
 const FLIP_ANIMATION_CLASS = "is-flip-animating";
-const FLIP_ANIMATION_DURATION_MS = 240;
+const FLIP_ANIMATION_DURATION_MS = 700;
 const flipAnimationState = new WeakMap();
 let modalPreviousFocus = null;
 let modalBackground = null;
@@ -50,7 +50,7 @@ function restartElementAnimation(element, className, durationMs) {
   };
 
   const onEnd = (event) => {
-    if (event.target !== element) {
+    if (event.target !== element || event.pseudoElement) {
       return;
     }
     cleanup();
