@@ -43,6 +43,7 @@ Cards are often fundamental to baseball sims, but digital implementations are of
 - Optional reshuffle with or without clearing history
 - Clean, minimalist card rendering
 - A brief card-face flash on `CURRENT CARD` draws
+- Choose a translucent or opaque card-face flash
 - Support for multiple FAC layouts and variants
 - Recent draw history
 - Click history entries to preview previous cards
@@ -60,6 +61,7 @@ Cards are often fundamental to baseball sims, but digital implementations are of
 - Clicking the active deck does nothing.
 - Click a history entry to preview it alongside the current card.
 - Reloading starts a fresh session with replacement; turn on Without replacement to use a fresh shuffled deck.
+- Open Settings and under Draw animation choose Translucent or Opaque. Your choice is saved in the current browser.
 - Click About for version, author, and support link.
 
 ---
@@ -294,7 +296,7 @@ sure to update to point to your counter.
 
 ## Status
 
-Current version: **v0.0.24**.
+Current version: **v0.0.25**.
 
 This release establishes:
 

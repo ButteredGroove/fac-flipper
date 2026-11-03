@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## Added
 
+- Add a preference for translucent or opaque card flashes ([#86](https://github.com/ButteredGroove/fac-flipper/issues/86))
 - Updated SPADV deck to 2026 v1 ([#59](https://github.com/ButteredGroove/fac-flipper/issues/59))
 - Add 4th edition FAC deck without MUST STEAL cards ([#58](https://github.com/ButteredGroove/fac-flipper/issues/58))
 - Add 2nd/3rd edition FAC deck ([#3](https://github.com/ButteredGroove/fac-flipper/issues/3))
@@ -26,6 +27,7 @@ All notable changes to this project will be documented in this file.
 
 ## Fixed
 
+- Hide the unused Cancel button in single-action dialogs ([#86](https://github.com/ButteredGroove/fac-flipper/issues/86))
 - Keep the replacement switch consistent with drawing mode after a reload ([#82](https://github.com/ButteredGroove/fac-flipper/issues/82))
 - Reject empty or malformed deck CSV files with clear errors ([#70](https://github.com/ButteredGroove/fac-flipper/issues/70))
 - Try other decks when a startup deck fails to load ([#69](https://github.com/ButteredGroove/fac-flipper/issues/69))
