@@ -42,7 +42,7 @@ Cards are often fundamental to baseball sims, but digital implementations are of
 - Automatic shuffle and reshuffle
 - Optional reshuffle with or without clearing history
 - Clean, minimalist card rendering
-- Subtle visual flip cue on `CURRENT CARD` draws
+- A brief card-face flash on `CURRENT CARD` draws
 - Support for multiple FAC layouts and variants
 - Recent draw history
 - Click history entries to preview previous cards
@@ -294,7 +294,7 @@ sure to update to point to your counter.
 
 ## Status
 
-Current version: **v0.0.23**.
+Current version: **v0.0.24**.
 
 This release establishes:
 

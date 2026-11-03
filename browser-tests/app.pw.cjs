@@ -51,6 +51,79 @@ test("draws without replacement and reshuffles without clearing history", async 
   await expect(page.locator(".history-item")).toHaveCount(1);
 });
 
+test("flashes a stationary card and accepts rapid draws", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("#drawButton")).toBeEnabled();
+  const result = await page.evaluate(() => {
+    const card = document.querySelector("#card");
+    const before = card.getBoundingClientRect();
+    document.querySelector("#drawButton").click();
+    const animations = document.getAnimations();
+    for (const animation of animations) {
+      animation.pause();
+      animation.currentTime = 190;
+    }
+    const flash = animations.find(
+      (animation) => animation.animationName === "cardSurfaceTint",
+    );
+    if (!flash) return null;
+    flash.currentTime = 0;
+    const start = Number(getComputedStyle(card, "::before").opacity);
+    flash.currentTime = 150;
+    const peak = Number(getComputedStyle(card, "::before").opacity);
+    const flashColor = getComputedStyle(card, "::before").backgroundColor;
+    const buttonColor = getComputedStyle(
+      document.querySelector("#drawButton"),
+    ).backgroundColor;
+    flash.currentTime = 300;
+    const held = Number(getComputedStyle(card, "::before").opacity);
+    flash.currentTime = 600;
+    const fading = Number(getComputedStyle(card, "::before").opacity);
+    const during = card.getBoundingClientRect();
+    document.querySelector("#drawButton").click();
+    const restarted = Number(getComputedStyle(card, "::before").opacity);
+    return {
+      start,
+      peak,
+      held,
+      fading,
+      restarted,
+      flashColor,
+      buttonColor,
+      before: [before.x, before.y, before.width, before.height],
+      during: [during.x, during.y, during.width, during.height],
+    };
+  });
+  expect(result).not.toBeNull();
+  expect(result.start).toBe(1);
+  expect(result.peak).toBe(1);
+  expect(result.held).toBe(1);
+  expect(result.fading).toBeLessThan(1);
+  expect(result.restarted).toBe(1);
+  expect(result.flashColor).toBe(result.buttonColor);
+  expect(result.during).toEqual(result.before);
+  await expect(page.locator(".history-item")).toHaveCount(2);
+});
+
+test("provides a stationary draw cue for reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await expect(page.locator("#drawButton")).toBeEnabled();
+  const cue = await page.evaluate(() => {
+    document.querySelector("#drawButton").click();
+    const card = document.querySelector("#card");
+    const overlay = getComputedStyle(card, "::before");
+    return {
+      tint: Number(overlay.opacity),
+      flash: overlay.animationName,
+      card: getComputedStyle(card).animationName,
+    };
+  });
+  expect(cue.tint).toBeGreaterThan(0);
+  expect(cue.flash).toBe("none");
+  expect(cue.card).toBe("none");
+});
+
 test("keeps the replacement switch in sync after reload and page restoration", async ({
   page,
 }) => {
