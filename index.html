@@ -56,6 +56,7 @@
             <span class="icon icon-refresh" aria-hidden="true"></span>
             Reshuffle
           </button>
+          <button class="btn ghost small" id="settingsButton" type="button">Settings</button>
           <button class="btn ghost small" id="aboutButton" type="button">About</button>
         </div>
       </header>
@@ -113,6 +114,16 @@
         </aside>
       </div>
     </div>
+
+    <template id="settingsTemplate">
+      <div class="settings-content">
+        <label class="setting-label" for="drawAnimation">Draw animation</label>
+        <select class="setting-select" id="drawAnimation">
+          <option value="translucent">Translucent</option>
+          <option value="opaque">Opaque</option>
+        </select>
+      </div>
+    </template>
 
     <div class="modal-overlay" id="modalOverlay" hidden>
       <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalBody">

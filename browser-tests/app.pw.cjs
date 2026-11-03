@@ -52,6 +52,9 @@ test("draws without replacement and reshuffles without clearing history", async 
 });
 
 test("flashes a stationary card and accepts rapid draws", async ({ page }) => {
+  await page.addInitScript(() =>
+    window.localStorage.setItem("fac-flipper:drawAnimation", "opaque"),
+  );
   await page.goto("/");
   await expect(page.locator("#drawButton")).toBeEnabled();
   const result = await page.evaluate(() => {
@@ -105,23 +108,136 @@ test("flashes a stationary card and accepts rapid draws", async ({ page }) => {
   await expect(page.locator(".history-item")).toHaveCount(2);
 });
 
-test("provides a stationary draw cue for reduced motion", async ({ page }) => {
+for (const motion of ["reduce", "no-preference"]) {
+  test(`provides a translucent cue with system motion ${motion}`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: motion });
+    await page.goto("/");
+    await expect(page.locator("#drawButton")).toBeEnabled();
+    const cue = await page.evaluate(() => {
+      document.querySelector("#drawButton").click();
+      const card = document.querySelector("#card");
+      const overlay = getComputedStyle(card, "::before");
+      return {
+        tint: Number(overlay.opacity),
+        flash: overlay.animationName,
+        card: getComputedStyle(card).animationName,
+      };
+    });
+    expect(cue.tint).toBeGreaterThan(0);
+    expect(cue.flash).toBe("none");
+    expect(cue.card).toBe("none");
+  });
+}
+
+test("lets the user choose an opaque or translucent flash and remembers it", async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await expect(page.locator("#drawButton")).toBeEnabled();
-  const cue = await page.evaluate(() => {
+  await page.locator("#settingsButton").click();
+  const setting = page.getByLabel("Draw animation");
+  await expect(setting).toHaveValue("translucent");
+  await setting.selectOption("opaque");
+  await page.locator("#modalOk").click();
+  await page.reload();
+  await expect(page.locator("#drawButton")).toBeEnabled();
+  await page.locator("#settingsButton").click();
+  await expect(setting).toHaveValue("opaque");
+  await page.evaluate(() => {
+    document.querySelector("#drawAnimation").value = "translucent";
+    window.dispatchEvent(
+      new PageTransitionEvent("pageshow", { persisted: true }),
+    );
+  });
+  await expect(setting).toHaveValue("opaque");
+  await page.locator("#modalOk").click();
+  const full = await page.evaluate(() => {
     document.querySelector("#drawButton").click();
-    const card = document.querySelector("#card");
-    const overlay = getComputedStyle(card, "::before");
     return {
-      tint: Number(overlay.opacity),
-      flash: overlay.animationName,
-      card: getComputedStyle(card).animationName,
+      animation: getComputedStyle(document.querySelector("#card"), "::before")
+        .animationName,
+      opacity: Number(
+        getComputedStyle(document.querySelector("#card"), "::before").opacity,
+      ),
     };
   });
-  expect(cue.tint).toBeGreaterThan(0);
-  expect(cue.flash).toBe("none");
-  expect(cue.card).toBe("none");
+  expect(full.animation).toBe("cardSurfaceTint");
+  expect(full.opacity).toBe(1);
+
+  await page.locator("#settingsButton").click();
+  await setting.selectOption("translucent");
+  await page.locator("#modalOk").click();
+  const system = await page.evaluate(() => {
+    document.querySelector("#drawButton").click();
+    return {
+      animation: getComputedStyle(document.querySelector("#card"), "::before")
+        .animationName,
+      opacity: Number(
+        getComputedStyle(document.querySelector("#card"), "::before").opacity,
+      ),
+    };
+  });
+  expect(system.animation).toBe("none");
+  expect(system.opacity).toBe(0.14);
+  await page.reload();
+  await page.locator("#settingsButton").click();
+  await expect(setting).toHaveValue("translucent");
+});
+
+test("applies the selected animation for the session when storage is blocked", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() => {
+    Object.defineProperty(window, "localStorage", {
+      get() {
+        throw new Error("Storage blocked");
+      },
+    });
+  });
+  await page.goto("/");
+  await expect(page.locator("#drawButton")).toBeEnabled();
+  await page.locator("#settingsButton").click();
+  const setting = page.getByLabel("Draw animation");
+  await expect(setting).toHaveValue("translucent");
+  await setting.selectOption("opaque");
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-draw-animation",
+    "opaque",
+  );
+  await page.locator("#modalOk").click();
+  await page.reload();
+  await page.locator("#settingsButton").click();
+  await expect(setting).toHaveValue("translucent");
+});
+
+test("preserves the previously selected full flash as opaque", async ({
+  page,
+}) => {
+  await page.addInitScript(() =>
+    window.localStorage.setItem("fac-flipper:drawAnimation", "full"),
+  );
+  await page.goto("/");
+  await page.locator("#settingsButton").click();
+  await expect(page.getByLabel("Draw animation")).toHaveValue("opaque");
+});
+
+test("opens settings with the keyboard and returns focus on close", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.locator("#settingsButton").focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("dialog", { name: "Settings" })).toBeVisible();
+  await expect(page.getByLabel("Draw animation")).toBeFocused();
+  await expect(page.locator("#modalCancel")).toBeHidden();
+  await page.keyboard.press("Tab");
+  await expect(page.locator("#modalOk")).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#settingsButton")).toBeFocused();
 });
 
 test("keeps the replacement switch in sync after reload and page restoration", async ({

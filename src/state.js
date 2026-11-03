@@ -12,6 +12,7 @@ const elements = {
   previewCard: document.getElementById("previewCard"),
   clearPreview: document.getElementById("clearPreview"),
   drawButton: document.getElementById("drawButton"),
+  settingsButton: document.getElementById("settingsButton"),
   aboutButton: document.getElementById("aboutButton"),
   resetButtonTop: document.getElementById("resetButtonTop"),
   reshuffleButton: document.getElementById("reshuffleButton"),

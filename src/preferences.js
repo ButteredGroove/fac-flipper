@@ -1,4 +1,25 @@
 const LAST_DECK_PATH_KEY = "fac-flipper:lastDeckPath";
+const DRAW_ANIMATION_KEY = "fac-flipper:drawAnimation";
+
+function getDrawAnimationPreference() {
+  try {
+    const value = window.localStorage.getItem(DRAW_ANIMATION_KEY);
+    return value === "opaque" || value === "full" ? "opaque" : "translucent";
+  } catch {
+    return "translucent";
+  }
+}
+
+function setDrawAnimationPreference(value) {
+  if (value !== "opaque" && value !== "translucent") {
+    return;
+  }
+  try {
+    window.localStorage.setItem(DRAW_ANIMATION_KEY, value);
+  } catch {
+    // The selected mode remains active for this session.
+  }
+}
 
 function getLastDeckPath() {
   try {
@@ -28,4 +49,10 @@ function clearLastDeckPath() {
   }
 }
 
-export { getLastDeckPath, setLastDeckPath, clearLastDeckPath };
+export {
+  getDrawAnimationPreference,
+  setDrawAnimationPreference,
+  getLastDeckPath,
+  setLastDeckPath,
+  clearLastDeckPath,
+};

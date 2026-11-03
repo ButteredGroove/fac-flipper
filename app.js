@@ -6,7 +6,9 @@ import {
 } from "./src/deck.js";
 import {
   clearLastDeckPath,
+  getDrawAnimationPreference,
   getLastDeckPath,
+  setDrawAnimationPreference,
   setLastDeckPath,
 } from "./src/preferences.js";
 import { MAX_HISTORY, elements, state } from "./src/state.js";
@@ -33,12 +35,48 @@ import {
 } from "./src/ui.js";
 import { formatTime, isTypingTarget } from "./src/utils.js";
 
+let drawAnimationPreference = "translucent";
+
 init();
 
 function init() {
+  initDrawAnimationPreference();
   wireEvents();
   syncReplacementControl();
   loadDeckManifest();
+}
+
+function initDrawAnimationPreference() {
+  applyDrawAnimationPreference(getDrawAnimationPreference());
+  window.addEventListener("pageshow", () =>
+    applyDrawAnimationPreference(drawAnimationPreference),
+  );
+}
+
+function applyDrawAnimationPreference(value) {
+  drawAnimationPreference = value === "opaque" ? "opaque" : "translucent";
+  document.documentElement.dataset.drawAnimation = drawAnimationPreference;
+  const select = document.getElementById("drawAnimation");
+  if (select) {
+    select.value = drawAnimationPreference;
+  }
+}
+
+function openSettings() {
+  if (state.modalOpen) {
+    return;
+  }
+  const content = document
+    .getElementById("settingsTemplate")
+    .content.cloneNode(true);
+  const select = content.querySelector("#drawAnimation");
+  select.value = drawAnimationPreference;
+  select.addEventListener("change", () => {
+    applyDrawAnimationPreference(select.value);
+    setDrawAnimationPreference(drawAnimationPreference);
+  });
+  openModal({ title: "Settings", bodyNodes: content, confirmLabel: "Close" });
+  select.focus();
 }
 
 function wireEvents() {
@@ -77,6 +115,7 @@ function wireEvents() {
     requestReshuffle(false),
   );
   elements.aboutButton.addEventListener("click", openAboutModal);
+  elements.settingsButton?.addEventListener("click", openSettings);
 
   elements.replacementToggleSide.addEventListener("change", (event) => {
     requestReplacementMode(event.target.checked);
