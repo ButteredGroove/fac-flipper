@@ -9,7 +9,7 @@
 
 ## Local development and verification
 
-- Use Node.js 24 (`.nvmrc`) and the locked npm dependencies. There is no build script or bundling step; serve the static files over HTTP.
+- Use the Node.js version specified in .nvmrc and the dependencies recorded in package-lock.json. Treat these files as authoritative; do not duplicate version requirements in this document. There is no build script or bundling step; serve the static files over HTTP.
 - Run commands from the repository root:
   - `node scripts/test-server.cjs`: serve at `http://127.0.0.1:4174/`; opening `index.html` directly cannot load modules and decks correctly.
   - `npm run lint`: Biome checks.
@@ -21,4 +21,6 @@
 ## Change and release boundaries
 
 - Preserve unrelated working-tree and staged changes; stage only task files. Make focused local commits only when the task explicitly authorizes them. A local commit never authorizes a push.
-- Require explicit user approval before remote pushes, deployments, publication, or destructive changes. The Pages workflow deploys on pushes to `main`/`master` and manual dispatch; do not trigger it without deployment approval.
+- Require explicit authorization before pushing branches or creating pull requests.
+- Never push directly to deployment-triggering branches (main/master) or trigger a deployment without separate, explicit approval.
+- Never force-push, rewrite shared history, or perform destructive operations without explicit authorization.
